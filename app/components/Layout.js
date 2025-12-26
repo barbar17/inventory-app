@@ -1,0 +1,35 @@
+import { Container, Navbar, Nav, Button } from 'react-bootstrap';
+import { useAuth } from './AuthProvider';
+import Link from 'next/link';
+
+const Layout = ({ children }) => {
+  const { user, logout } = useAuth();
+
+  return (
+    <>
+      <Navbar bg="dark" variant="dark" expand="lg">
+        <Container>
+          <Navbar.Brand href="/">Inventory Manager</Navbar.Brand>
+          <Nav className="me-auto">
+            <Nav.Link as={Link} href="/">Home</Nav.Link>
+            {user && user.role === 'admin' && (
+              <>
+                <Nav.Link as={Link} href="/admin">Inventory</Nav.Link>
+                <Nav.Link as={Link} href="/admin/users">Manage Users</Nav.Link>
+                <Nav.Link as={Link} href="/admin/history">History</Nav.Link>
+              </>
+            )}
+          </Nav>
+          {user && (
+            <Button variant="outline-light" onClick={logout}>Logout</Button>
+          )}
+        </Container>
+      </Navbar>
+      <Container className="mt-4">
+        {children}
+      </Container>
+    </>
+  );
+};
+
+export default Layout;
