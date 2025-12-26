@@ -1,25 +1,25 @@
 import { Table, Button } from 'react-bootstrap';
 
-const InventoryList = ({ items, onEdit, onDelete, readOnly = false }) => {
+const InventoryList = ({ items, onEdit, onDelete, readOnly = false }:{ items:any, onEdit:any, onDelete:any, readOnly:boolean }) => {
   return (
     <Table striped bordered hover>
       <thead>
         <tr>
           <th>Nama Perangkat</th>
-          <th>jenis Perangkat</th>
-          <th>Merek/Tipe</th>
+          <th>Jenis Perangkat</th>
+          <th>Jumlah</th>
           <th>Tahun Pengadaan</th>
           <th>Kondisi</th>
           <th>Lokasi</th>
-          <th>Status oprasional</th>
+          <th>Status Operasional</th>
           <th>IP Address</th>
           <th>MAC Address</th>
           <th>Keterangan</th>
-          {!readOnly && <th>Riwayat Pemeliharaan</th>}
+          {!readOnly && <th>Aksi</th>}
         </tr>
       </thead>
       <tbody>
-        {items.map((item) => (
+        {items.map((item: any) => (
           <tr key={item.id}>
             <td>{item.name}</td>
             <td>{item.type === 'goods' ? 'Goods' : 'IT Device'}</td>

@@ -15,7 +15,7 @@ export default function Login() {
   useEffect(() => {
     if (user) {
       if (user.role === 'admin') {
-        router.push('/admin');
+        router.push('/admin/inventory');
       } else {
         router.push('/');
       }

@@ -35,7 +35,7 @@ export default function Home() {
           <p className="text-center">Hello, {user.username} ({user.role})!</p>
           {user.role === 'admin' ? (
             <div className="text-center">
-              <Link href="/admin">
+              <Link href="/admin/inventory">
                 <Button variant="primary" className="me-2">Go to Admin Inventory</Button>
               </Link>
               <Button variant="secondary" onClick={logout}>Logout</Button>

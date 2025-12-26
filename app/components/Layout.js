@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
             <Nav.Link as={Link} href="/">Home</Nav.Link>
             {user && user.role === 'admin' && (
               <>
-                <Nav.Link as={Link} href="/admin">Inventory</Nav.Link>
+                <Nav.Link as={Link} href="/admin/inventory">Inventory</Nav.Link>
                 <Nav.Link as={Link} href="/admin/users">Manage Users</Nav.Link>
                 <Nav.Link as={Link} href="/admin/history">History</Nav.Link>
               </>
