@@ -4,13 +4,41 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthProvider';
 import { Form, Button, Container, Alert, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
+import { FormEvent } from 'react';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, user } = useAuth();
+  const { user, setUser, setRole } = useAuth();
   const router = useRouter();
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    console.log(JSON.stringify(data))
+
+    try {
+      const res = await fetch('/api/login', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: String(data.username),
+          password: String(data.password),
+        })
+      })
+
+      const payload = await res.json()
+
+      if(!res.ok) {
+        alert(payload.error)
+        return
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   useEffect(() => {
     if (user) {
@@ -22,15 +50,6 @@ export default function Login() {
     }
   }, [user, router]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (login(username, password)) {
-      // Redirect handled by useEffect
-    } else {
-      setError('Invalid credentials');
-    }
-  };
-
   return (
     <Container className="mt-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "24px", alignItems: 'center', width: '100%' }}>
       <div className='w-100'>
@@ -39,15 +58,14 @@ export default function Login() {
       </div>
       <div style={{ maxWidth: '35%' }} className='p-4 bg-white border rounded'>
         <h2 className='fw-bold mb-4'>Login</h2>
-        {error && <Alert variant="danger">{error}</Alert>}
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleLogin}>
           <Form.Group className="mb-3">
             <FloatingLabel label='Username'>
               <Form.Control
+                name='username'
                 placeholder='Username'
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                defaultValue=""
                 required
               />
             </FloatingLabel>
@@ -55,10 +73,10 @@ export default function Login() {
           <Form.Group className="mb-3">
             <FloatingLabel label='Password'>
               <Form.Control
+                name='password'
                 placeholder='Password'
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                defaultValue=""
                 required
               />
             </FloatingLabel>

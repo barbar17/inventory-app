@@ -9,8 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  
-  const [users, setUsers] = useState([]); // Daftar semua users
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -32,30 +31,8 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    const storedUsers = localStorage.getItem('users');
-    if (storedUsers) {
-      setUsers(JSON.parse(storedUsers));
-    } else {
-      // Default users
-      const defaultUsers = [
-        { id: 1, username: 'admin', password: 'admin123', role: 'admin' },
-        { id: 2, username: 'user1', password: 'pass1', role: 'user' },
-      ];
-      setUsers(defaultUsers);
-      localStorage.setItem('users', JSON.stringify(defaultUsers));
-    }
     setLoading(false);
   }, []);
-
-  const login = (username, password) => {
-    const foundUser = users.find(u => u.username === username && u.password === password);
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
-      return true;
-    }
-    return false;
-  };
 
   const logout = () => {
     setUser(null);
@@ -89,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
   
   return (
-    <AuthContext.Provider value={{ user, users, login, logout, addUser, updateUser, deleteUser, loading }}>
+    <AuthContext.Provider value={{ user, setUser, role, setRole, logout, addUser, updateUser, deleteUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
