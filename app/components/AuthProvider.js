@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    router.replace('/login')
     localStorage.removeItem('user');
   };
 

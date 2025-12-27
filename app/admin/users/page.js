@@ -14,12 +14,6 @@ export default function ManageUsers() {
   const [newUser, setNewUser] = useState({ username: '', password: '', role: 'user' });
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      router.push('/');
-    }
-  }, [user, router]);
-
   const handleSave = () => {
     if (!newUser.username || !newUser.password) {
       setError('Username dan password wajib diisi');
@@ -47,10 +41,6 @@ export default function ManageUsers() {
       deleteUser(id);
     }
   };
-
-  if (!user || user.role !== 'admin') {
-    return <div>Access denied</div>;
-  }
 
   return (
     <Layout>

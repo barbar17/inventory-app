@@ -15,10 +15,6 @@ export default function Admin() {
   const [editingItem, setEditingItem] = useState(null);
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      router.push('/');
-      return;
-    }
     const storedItems = localStorage.getItem('inventory');
     if (storedItems) {
       setItems(JSON.parse(storedItems));
@@ -47,10 +43,6 @@ export default function Admin() {
   const handleDelete = (id) => {
     setItems(items.filter((item) => item.id !== id));
   };
-
-  if (!user || user.role !== 'admin') {
-    return <div>Access denied</div>;
-  }
 
   return (
     <Layout>

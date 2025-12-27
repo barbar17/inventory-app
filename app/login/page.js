@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthProvider';
-import { Form, Button, Container, Alert } from 'react-bootstrap';
+import { Form, Button, Container, Alert, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
@@ -32,31 +32,41 @@ export default function Login() {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: '400px' }}>
-      <h2>Login</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Button type="submit" variant="primary">Login</Button>
-      </Form>
-      <p className="mt-3">Demo: admin/admin123 for admin, any other for user.</p>
+    <Container className="mt-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "24px", alignItems: 'center', width: '100%' }}>
+      <div className='w-100'>
+        <h1 className="text-center fw-bold">SPP IT</h1>
+        <h1 className="text-center fw-bold">BID TIK POLDA LAMPUNG</h1>
+      </div>
+      <div style={{ maxWidth: '35%' }} className='p-4 bg-white border rounded'>
+        <h2 className='fw-bold mb-4'>Login</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <FloatingLabel label='Username'>
+              <Form.Control
+                placeholder='Username'
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </FloatingLabel>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <FloatingLabel label='Password'>
+              <Form.Control
+                placeholder='Password'
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </FloatingLabel>
+          </Form.Group>
+          <Button type="submit" variant="primary">Login</Button>
+        </Form>
+        <p className="mt-3">Demo: admin/admin123 for admin, any other for user.</p>
+      </div>
     </Container>
   );
 }
