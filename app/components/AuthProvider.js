@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 const AuthContext = createContext();
 
@@ -8,8 +9,23 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  
   const [users, setUsers] = useState([]); // Daftar semua users
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem('user');
+    
+    if (!token && pathname !== '/login') {
+      setUser(null);
+      router.replace('/login');
+      return;
+    }
+
+  }, [pathname]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -70,7 +86,7 @@ export const AuthProvider = ({ children }) => {
       logout();
     }
   };
-
+  
   return (
     <AuthContext.Provider value={{ user, users, login, logout, addUser, updateUser, deleteUser, loading }}>
       {children}

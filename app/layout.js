@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './global.css';
-import { AuthProvider } from './components/AuthProvider';
+import { AuthProvider} from './components/AuthProvider';
 
 export const metadata = {
   title: 'Inventory Manager',

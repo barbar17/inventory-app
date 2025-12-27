@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import InventoryList from './components/InventoryList';
 import DownloadButtons from './components/DownloadButtons';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { user, logout, loading } = useAuth();
   const [items, setItems] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const storedItems = localStorage.getItem('inventory');
@@ -26,6 +28,16 @@ export default function Home() {
       </Container>
     );
   }
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    } else {
+      if (user.role === 'admin') {
+        router.push('/admin/inventory');
+      }
+    }
+  }, [user])
 
   return (
     <Container className="mt-5">
