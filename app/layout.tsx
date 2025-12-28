@@ -1,13 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './global.css';
-import { AuthProvider} from './components/AuthProvider';
+import { AuthProvider } from './components/AuthProvider';
 
 export const metadata = {
   title: 'Inventory Manager',
   description: 'App for recording inventory of goods and IT network devices',
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({children}:{children: React.ReactNode}) {
   return (
     <html lang="en">
       <body>

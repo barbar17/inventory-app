@@ -5,7 +5,7 @@ import { useAuth } from '../components/AuthProvider';
 import { Form, Button, Container, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
-import { User } from '../type/User';
+import { UserCtx } from '../types/User';
 
 export default function Login() {
   const { setUser, setLoading } = useAuth();
@@ -33,7 +33,7 @@ export default function Login() {
         alert(payload.error)
         return
       }
-      const user: User = {
+      const user: UserCtx = {
         username: payload.username,
         role: payload.role,
         isAuth: true

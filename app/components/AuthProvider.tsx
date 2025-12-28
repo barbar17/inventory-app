@@ -2,12 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { User } from '../type/User';
+import { UserCtx } from '../types/User';
 import { Spinner } from 'react-bootstrap';
 
 type AuthContextValue = {
-  user: User | null,
-  setUser: Dispatch<SetStateAction<User | null>>,
+  user: UserCtx | null,
+  setUser: Dispatch<SetStateAction<UserCtx | null>>,
   loading: boolean,
   setLoading: Dispatch<SetStateAction<boolean>>,
   logout: () => void
@@ -24,7 +24,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserCtx | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isCheckAuth, setIsCheckAuth] = useState<boolean>(true);
 
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const user: User = {
+      const user: UserCtx = {
         username: payload.username,
         role: payload.role,
         isAuth: true
