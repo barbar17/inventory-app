@@ -17,8 +17,6 @@ export default function Login() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    console.log(JSON.stringify(data))
-
     try {
       const res = await fetch('/api/login', {
         method: "POST",

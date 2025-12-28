@@ -16,13 +16,13 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if(!ctx) {
+  if (!ctx) {
     throw new Error("this page is not within AuthProvider")
   }
   return ctx
 };
 
-export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +41,39 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     setUser(null);
     router.replace('/login')
   };
-  
+
+  const checkUserToken = async () => {
+    try {
+      const res = await fetch("/api/user/whoami", {
+        credentials: "include",
+      });
+
+      if (res.status === 401) {
+        logout();
+        return;
+      }
+
+      const payload = await res.json()
+      if (!res.ok) {
+        alert(payload.error)
+        return
+      }
+
+      const user: User = {
+        username: payload.username,
+        role: payload.role,
+        isAuth: true
+      }
+      setUser(user)
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  useEffect(() => {
+    checkUserToken()
+  }, [])
+
   return (
     <AuthContext.Provider value={{ user, setUser, logout, loading, setLoading }}>
       {children}
