@@ -1,24 +1,13 @@
 'use client';
 
 import { useAuth } from './components/AuthProvider';
-import { Button, Container, Spinner } from 'react-bootstrap';
-import Link from 'next/link';
+import { Container } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import InventoryList from './components/InventoryList';
-import DownloadButtons from './components/DownloadButtons';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { user, logout, loading } = useAuth();
-  const [items, setItems] = useState([]);
+  const { user } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    const storedItems = localStorage.getItem('inventory');
-    if (storedItems) {
-      setItems(JSON.parse(storedItems));
-    }
-  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -33,10 +22,6 @@ export default function Home() {
       className="d-flex justify-content-center align-items-center"
       style={{ height: "100vh" }}
     >
-      <div className="text-center">
-        <Spinner animation="border" />
-        <p>Loading...</p>
-      </div>
     </Container>
   );
 }
