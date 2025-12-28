@@ -40,6 +40,11 @@ export async function POST(req: Request) {
         if (error instanceof z.ZodError) {
             return NextResponse.json({ "error": error.issues[0].message }, { status: 400 })
         }
-        return NextResponse.json({ "error": error.message }, { status: 500 })
+
+        let errMsg = error.message
+        if(!errMsg || errMsg === "") {
+            errMsg = error.code
+        }
+        return NextResponse.json({ "error": errMsg }, { status: 500 })
     }
 }

@@ -8,11 +8,12 @@ import { FormEvent } from 'react';
 import { User } from '../type/User';
 
 export default function Login() {
-  const { user, setUser } = useAuth();
+  const { setUser, setLoading } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
+    setLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -38,20 +39,15 @@ export default function Login() {
         isAuth: true
       }
       setUser(user)
+      router.replace(`/${payload.role}/inventory`)
     } catch (error) {
       alert(error)
     }
   }
 
   useEffect(() => {
-    if (user) {
-      if (user.role === 'admin') {
-        router.push('/admin/inventory');
-      } else {
-        router.push('/');
-      }
-    }
-  }, [user, router]);
+    setLoading(false)
+  }, [])
 
   return (
     <Container className="mt-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "24px", alignItems: 'center', width: '100%' }}>
