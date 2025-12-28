@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '../components/AuthProvider';
-import { Form, Button, Container, Alert, FloatingLabel } from 'react-bootstrap';
+import { Form, Button, Container, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
+import { User } from '../type/User';
 
 export default function Login() {
-  const [error, setError] = useState('');
-  const { user, setUser, setRole } = useAuth();
+  const { user, setUser } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -30,11 +30,16 @@ export default function Login() {
       })
 
       const payload = await res.json()
-
-      if(!res.ok) {
+      if (!res.ok) {
         alert(payload.error)
         return
       }
+      const user: User = {
+        username: payload.username,
+        role: payload.role,
+        isAuth: true
+      }
+      setUser(user)
     } catch (error) {
       alert(error)
     }

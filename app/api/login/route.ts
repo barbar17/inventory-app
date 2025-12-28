@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
         const [rows]: any = await DB.query('SELECT username, role FROM user WHERE username = ? AND password = ?', [body.username, body.password]);
         if (!rows || rows.length === 0) {
-            return NextResponse.json({ "error": "Username atau Password salah" }, { status: 422 })
+            return NextResponse.json({ "error": "Username atau Password salah" }, { status: 401 })
         }
 
         const user = rows[0]
@@ -26,22 +26,9 @@ export async function POST(req: Request) {
             role: user.role,
         }, process.env.JWT_SECRET!, { expiresIn: "12h" })
 
-        const accountInfo = jwt.sign({
-            username: user.username,
-            role: user.role,
-        }, process.env.INFO_SECRET!, { expiresIn: "12h" })
-
-        const res = NextResponse.json("success")
+        const res = NextResponse.json({username: user.username, role: user.role})
         res.cookies.set("X-IAK", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "strict",
-            path: "/",
-            maxAge: 60 * 60 * 60 * 12 //MEANS 12 HOURS
-        })
-
-        res.cookies.set("UAI", accountInfo, {
-            httpOnly: false,
             secure: false,
             sameSite: "strict",
             path: "/",
