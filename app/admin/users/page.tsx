@@ -42,9 +42,30 @@ export default function ManageUsers() {
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [user, setUser] = useState<User[]>([])
+
+  useEffect(() => {
+    async function getUser() {
+      try {
+        const res = await fetch("/api/user", { credentials: "include" });
+        const payload = await res.json()
+
+        if (!res.ok) {
+          alert(payload.error)
+          return
+        }
+
+        setUser(payload)
+      } catch(error) {
+        alert(error)
+      }
+    }
+
+    getUser()
+  }, [])
 
   const table = useReactTable<User>({
-    data: users,
+    data: user,
     columns,
     state: {
       sorting,
