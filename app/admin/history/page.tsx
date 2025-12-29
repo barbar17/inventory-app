@@ -1,18 +1,23 @@
 'use client'
 import { useAuth } from '@/app/components/AuthProvider'
-import Layout from '@/app/components/Layout'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { motion } from 'motion/react'
 
 function LogHistory() {
-  const {setLoading, isChecking} = useAuth()
+  const { setLoading, isChecking } = useAuth()
 
   useEffect(() => {
     setLoading(false)
   }, [isChecking])
   return (
-    <Layout>
-      <div>page</div>
-    </Layout>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+    >
+      page
+    </motion.div>
   )
 }
 

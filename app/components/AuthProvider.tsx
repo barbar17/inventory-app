@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, Dispatch, SetSta
 import { useRouter, usePathname } from 'next/navigation';
 import { UserCtx } from '../types/User';
 import { Spinner } from 'react-bootstrap';
+import Layout from './Layout';
 
 type AuthContextValue = {
   user: UserCtx | null,
@@ -114,7 +115,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthContext.Provider value={{ user, setUser, logout, loading, setLoading, isChecking }}>
       {loading && <Loader />}
-      {children}
+      <Layout>
+        {children}
+      </Layout>
     </AuthContext.Provider>
   );
 };

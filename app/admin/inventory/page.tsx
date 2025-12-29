@@ -5,8 +5,8 @@ import { useAuth } from '../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import InventoryForm from '../../components/InventoryForm';
 import InventoryList from '../../components/InventoryList';
-import Layout from '../../components/Layout';
 import { Barang } from '../../types/Barang';
+import { motion } from "motion/react";
 
 export default function Admin() {
   const { user, isChecking, setLoading } = useAuth();
@@ -36,7 +36,12 @@ export default function Admin() {
   }, [isChecking])
 
   return (
-    <Layout>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       <h1>Manajemen Inventaris</h1>
       <InventoryForm editingItem={editingItem} />
       <h2 className="mt-4">Inventory List</h2>
@@ -45,6 +50,6 @@ export default function Admin() {
         onDelete={handleDelete}
         readOnly={user?.role === 'user' && true}
       />
-    </Layout>
+    </motion.div>
   );
 }

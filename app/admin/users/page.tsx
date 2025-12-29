@@ -1,11 +1,10 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Table, Button } from 'react-bootstrap'
-import Layout from '../../components/Layout';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useAuth } from '@/app/components/AuthProvider';
+import { motion } from 'motion/react'
 
 interface GetUser {
   username: string,
@@ -35,7 +34,7 @@ const columns: ColumnDef<GetUser>[] = [
 
 export default function ManageUsers() {
   const router = useRouter();
-  const {setLoading, isChecking} = useAuth()
+  const { setLoading, isChecking } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -53,7 +52,7 @@ export default function ManageUsers() {
         }
 
         setUser(payload)
-      } catch(error) {
+      } catch (error) {
         alert(error)
       }
     }
@@ -81,7 +80,12 @@ export default function ManageUsers() {
   })
 
   return (
-    <Layout>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       <h1>Manage Users</h1>
       <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add GetUser</Button>
       <Table striped bordered hover responsive className="mt-3">
@@ -156,6 +160,6 @@ export default function ManageUsers() {
           <Button variant="primary" onClick={() => {console.log("save")}}>Save</Button>
         </Modal.Footer>
       </Modal> */}
-    </Layout>
+    </motion.div>
   );
 }
