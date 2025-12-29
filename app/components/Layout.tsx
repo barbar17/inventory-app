@@ -2,7 +2,7 @@ import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { useAuth } from './AuthProvider';
 import Link from 'next/link';
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: {children: React.ReactNode}) => {
   const { user, logout } = useAuth();
 
   return (

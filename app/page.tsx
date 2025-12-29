@@ -2,7 +2,7 @@
 
 import { useAuth } from './components/AuthProvider';
 import { Container } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {

@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
-
-interface Barang {
-  id: string,
-  nama: string,
-  jenis: "Goods" | "IT Device",
-  qty: number,
-  tahunPengadaan: string,
-  kondisi: "Baru" | "Bagus" | "Kurang Baik" | "Rusak",
-  lokasi: string,
-  statusOperasional: boolean,
-  ket: string,
-  ip: string,
-  mac: string
-}
+import { Barang } from '../types/Barang';
 
 const barangDefaultValue: Barang = {
   id: "",
@@ -29,7 +16,7 @@ const barangDefaultValue: Barang = {
   mac: "",
 }
 
-const InventoryForm = ({ onSave, editingItem }: { onSave: any, editingItem: any }) => {
+const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
   const [item, setItem] = useState<Barang>(barangDefaultValue);
 
   useEffect(() => {
@@ -48,7 +35,6 @@ const InventoryForm = ({ onSave, editingItem }: { onSave: any, editingItem: any 
     if (!item.id) {
       item.id = Date.now().toString(); // Simple ID generation
     }
-    onSave(item);
     setItem(barangDefaultValue);
   };
 

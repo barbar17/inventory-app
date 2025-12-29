@@ -3,13 +3,13 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-const DownloadButtons = ({ items }) => {
+const DownloadButtons = ({ items }: {items: any}) => {
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text('Inventory List', 14, 10);
     
     const tableColumn = ['Name', 'Type', 'Quantity', 'Location', 'Description', 'IP Address', 'MAC Address'];
-    const tableRows = items.map(item => [
+    const tableRows = items.map((item: any) => [
       item.name,
       item.type === 'goods' ? 'Goods' : 'IT Device',
       item.quantity,
@@ -29,7 +29,7 @@ const DownloadButtons = ({ items }) => {
   };
 
   const downloadExcel = () => {
-    const worksheetData = items.map(item => ({
+    const worksheetData = items.map((item: any) => ({
       Name: item.name,
       Type: item.type === 'goods' ? 'Goods' : 'IT Device',
       Quantity: item.quantity,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Table, Button } from 'react-bootstrap'
 import Layout from '../../components/Layout';
@@ -10,11 +10,6 @@ interface User {
   username: string,
   role: string,
 }
-
-const users: User[] = [
-  { username: 'admin1', role: 'admin' },
-  { username: 'user1', role: 'user' },
-]
 
 const columns: ColumnDef<User>[] = [
   {
