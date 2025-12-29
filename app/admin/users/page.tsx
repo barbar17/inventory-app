@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Table, Button } from 'react-bootstrap'
 import Layout from '../../components/Layout';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { useAuth } from '@/app/components/AuthProvider';
 
-interface User {
+interface GetUser {
   username: string,
   role: string,
 }
 
-const columns: ColumnDef<User>[] = [
+const columns: ColumnDef<GetUser>[] = [
   {
     accessorKey: 'username',
     header: "Username",
@@ -34,10 +35,11 @@ const columns: ColumnDef<User>[] = [
 
 export default function ManageUsers() {
   const router = useRouter();
+  const {setLoading, isChecking} = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [user, setUser] = useState<User[]>([])
+  const [user, setUser] = useState<GetUser[]>([])
 
   useEffect(() => {
     async function getUser() {
@@ -59,7 +61,11 @@ export default function ManageUsers() {
     getUser()
   }, [])
 
-  const table = useReactTable<User>({
+  useEffect(() => {
+    setLoading(false)
+  }, [isChecking])
+
+  const table = useReactTable<GetUser>({
     data: user,
     columns,
     state: {
@@ -77,7 +83,7 @@ export default function ManageUsers() {
   return (
     <Layout>
       <h1>Manage Users</h1>
-      <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add User</Button>
+      <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add GetUser</Button>
       <Table striped bordered hover responsive className="mt-3">
         <thead>
           {table.getHeaderGroups().map(hg => (
@@ -116,7 +122,7 @@ export default function ManageUsers() {
 
       {/* <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingUser ? 'Edit User' : 'Add User'}</Modal.Title>
+          <Modal.Title>{editingUser ? 'Edit GetUser' : 'Add GetUser'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -139,7 +145,7 @@ export default function ManageUsers() {
             <Form.Group className="mb-3">
               <Form.Label>Role</Form.Label>
               <Form.Select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
-                <option value="user">User</option>
+                <option value="user">GetUser</option>
                 <option value="admin">Admin</option>
               </Form.Select>
             </Form.Group>

@@ -9,7 +9,7 @@ import Layout from '../../components/Layout';
 import { Barang } from '../../types/Barang';
 
 export default function Admin() {
-  const { user } = useAuth();
+  const { user, isChecking, setLoading } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [editingItem, setEditingItem] = useState<Barang | null>(null);
@@ -30,6 +30,10 @@ export default function Admin() {
       localStorage.setItem('inventory', JSON.stringify(items));
     }
   }, [items, user]);
+
+  useEffect(() => {
+    setLoading(false)
+  }, [isChecking])
 
   return (
     <Layout>

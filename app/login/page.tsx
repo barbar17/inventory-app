@@ -8,7 +8,7 @@ import { FormEvent } from 'react';
 import { UserCtx } from '../types/User';
 
 export default function Login() {
-  const { setUser, setLoading } = useAuth();
+  const { setUser, setLoading, isChecking } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -30,7 +30,8 @@ export default function Login() {
 
       const payload = await res.json()
       if (!res.ok) {
-        alert(payload.error)
+        alert(payload.error);
+        setLoading(false);
         return
       }
       const user: UserCtx = {
@@ -42,12 +43,13 @@ export default function Login() {
       router.replace(`/${payload.role}/inventory`)
     } catch (error) {
       alert(error)
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     setLoading(false)
-  }, [])
+  }, [isChecking])
 
   return (
     <Container className="mt-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "24px", alignItems: 'center', width: '100%' }}>

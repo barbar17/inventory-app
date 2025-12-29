@@ -1,36 +1,68 @@
-import { Dispatch, SetStateAction, useState, useMemo } from 'react';
+import { Dispatch, SetStateAction, useState, useMemo, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import { Barang } from '../types/Barang';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
-
-const mock: Barang[] = [
-  { id: '1', nama: 'Laptop Dell', jenis: 'IT Device', qty: 5, tahunPengadaan: '2021', kondisi: 'Bagus', lokasi: 'Ruang IT', statusOperasional: true, ket: 'Persediaan', ip: '123456', mac: '098765' },
-  { id: '2', nama: 'Laptop Asus', jenis: 'IT Device', qty: 5, tahunPengadaan: '2021', kondisi: 'Bagus', lokasi: 'Ruang IT', statusOperasional: true, ket: 'Persediaan', ip: '123456', mac: '098765' },
-  { id: '3', nama: 'Laptop Advan', jenis: 'IT Device', qty: 5, tahunPengadaan: '2021', kondisi: 'Bagus', lokasi: 'Ruang IT', statusOperasional: true, ket: 'Persediaan', ip: '123456', mac: '098765' },
-]
 
 const InventoryList = ({ setEditingItem, onDelete, readOnly = false }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
   onDelete: (id: string) => void,
   readOnly?: boolean
 }) => {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [barang, setBarang] = useState<Barang[]>([]);
+
+  useEffect(() => {
+    async function getBarang() {
+      try {
+        const res = await fetch("/api/barang", { credentials: "include" });
+        const payload = await res.json()
+
+        if (!res.ok) {
+          alert(payload.error)
+          return
+        }
+
+        setBarang(payload)
+      } catch (error) {
+        alert(error)
+      }
+    }
+
+    getBarang()
+  }, [])
+
+  useEffect(() => {
+    console.log(barang)
+  }, [barang])
 
   const columns = useMemo<ColumnDef<Barang>[]>(() => {
     return [
+      { accessorKey: 'no', header: 'No' },
       { accessorKey: 'nama', header: 'Barang' },
       { accessorKey: 'jenis', header: 'Jenis' },
-      { accessorKey: 'qty', header: 'Quantity' },
-      { accessorKey: 'tahunPengadaan', header: 'Tahun Pengadaan' },
+      { accessorKey: 'qty', header: 'Jumlah' },
+      {
+        accessorKey: 'tahun_pengadaan', header: 'Tgl Pengadaan', cell: ({ getValue }) => {
+          const value = getValue() as string; return value?.slice(0, 10)
+        }
+      },
       { accessorKey: 'kondisi', header: 'Kondisi' },
       { accessorKey: 'lokasi', header: 'Lokasi' },
-      { accessorKey: 'statusOperasional', header: 'Status Op' },
-      { accessorKey: 'ket', header: 'Keterangan' },
+      { accessorKey: 'status_op', header: 'Status Op' , cell: ({ getValue }) => {
+          const value = getValue() as boolean; return value ? "Ya" : "Tidak"
+        }},
+      { accessorKey: 'ket', header: 'Ket' },
       { accessorKey: 'ip', header: 'IP Address' },
       { accessorKey: 'mac', header: 'Mac Address' },
-      ...(readOnly ? [
+      { accessorKey: 'created_by', header: 'User' },
+      {
+        accessorKey: 'created_at', header: 'Tgl Input', cell: ({ getValue }) => {
+          const value = getValue() as string; return value?.slice(0, 10)
+        }
+      },
+      ...(!readOnly ? [
         {
           id: 'aksi', header: 'Aksi', cell: (row: any) => (
             <>
@@ -44,7 +76,7 @@ const InventoryList = ({ setEditingItem, onDelete, readOnly = false }: {
   }, [readOnly]);
 
   const table = useReactTable<Barang>({
-    data: mock,
+    data: barang,
     columns,
     state: {
       sorting,
@@ -65,7 +97,7 @@ const InventoryList = ({ setEditingItem, onDelete, readOnly = false }: {
           <tr key={hg.id}>
             {hg.headers.map(h => (
               <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default' }}>
-                <div className="d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center justify-content-between" style={{ userSelect: "none" }}>
                   {flexRender(h.column.columnDef.header, h.getContext())}
 
                   {h.column.getCanSort() && (

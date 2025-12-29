@@ -3,11 +3,13 @@ export interface Barang {
   nama: string,
   jenis: "Goods" | "IT Device",
   qty: number,
-  tahunPengadaan: string,
+  tahun_pengadaan: string,
   kondisi: "Baru" | "Bagus" | "Kurang Baik" | "Rusak",
   lokasi: string,
-  statusOperasional: boolean,
+  status_op: boolean,
   ket: string,
   ip: string,
-  mac: string
+  mac: string,
+  created_by: string,
+  created_at: string,
 }

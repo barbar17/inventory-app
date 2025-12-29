@@ -11,6 +11,7 @@ type AuthContextValue = {
   loading: boolean,
   setLoading: Dispatch<SetStateAction<boolean>>,
   logout: () => void
+  isChecking: boolean
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserCtx | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isCheckAuth, setIsCheckAuth] = useState<boolean>(true);
+  const [isChecking, setIsChecking] = useState<boolean>(true);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -69,12 +71,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
+    setIsChecking(false)
+    setLoading(true)
     if (!user && pathname !== '/login' && isCheckAuth === false) {
       setUser(null);
       router.replace('/login');
-    } else if (user) {
-      setLoading(false)
     }
+    setIsChecking(false)
   }, [pathname]);
 
   useEffect(() => {
@@ -109,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, loading, setLoading }}>
+    <AuthContext.Provider value={{ user, setUser, logout, loading, setLoading, isChecking }}>
       {loading && <Loader />}
       {children}
     </AuthContext.Provider>
