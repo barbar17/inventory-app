@@ -33,7 +33,6 @@ const columns: ColumnDef<GetUser>[] = [
 ]
 
 export default function ManageUsers() {
-  const router = useRouter();
   const { setLoading, isChecking } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
