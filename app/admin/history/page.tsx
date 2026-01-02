@@ -6,6 +6,7 @@ import { History } from '@/app/types/History'
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { Table } from 'react-bootstrap'
 import { Form } from 'react-bootstrap'
+import TableWrapper from '@/app/components/TableWrapper'
 
 const columns: ColumnDef<History>[] = [
   {
@@ -97,41 +98,49 @@ function LogHistory() {
           placeholder='Cari...'
         />
       </div>
-      <Table striped bordered hover responsive className="mt-3">
-        <thead>
-          {table.getHeaderGroups().map(hg => (
-            <tr key={hg.id}>
-              {hg.headers.map(h => (
-                <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default' }}>
-                  <div className="d-flex align-items-center justify-content-between">
-                    {flexRender(h.column.columnDef.header, h.getContext())}
+      <TableWrapper>
+        <Table
+          striped
+          bordered
+          hover
+          responsive
+          className="table table-bordered mb-0"
+        >
+          <thead>
+            {table.getHeaderGroups().map(hg => (
+              <tr key={hg.id}>
+                {hg.headers.map(h => (
+                  <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default' }}>
+                    <div className="d-flex align-items-center justify-content-between">
+                      {flexRender(h.column.columnDef.header, h.getContext())}
 
-                    {h.column.getCanSort() && (
-                      <span>
-                        {h.column.getIsSorted() === 'asc' && '▲'}
-                        {h.column.getIsSorted() === 'desc' && '▼'}
-                        {!h.column.getIsSorted() && '⇅'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
+                      {h.column.getCanSort() && (
+                        <span>
+                          {h.column.getIsSorted() === 'asc' && '▲'}
+                          {h.column.getIsSorted() === 'desc' && '▼'}
+                          {!h.column.getIsSorted() && '⇅'}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
 
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+          <tbody>
+            {table.getRowModel().rows.map(row => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </TableWrapper>
     </motion.div>
   )
 }

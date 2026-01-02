@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 import { Barang } from '../types/Barang';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
+import TableWrapper from './TableWrapper';
 
 const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
@@ -40,10 +41,10 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
 
   const columns = useMemo<ColumnDef<Barang>[]>(() => {
     return [
-      { accessorKey: 'no', header: 'No' },
+      { accessorKey: 'no', header: 'No', size: 60 },
       { accessorKey: 'nama', header: 'Barang' },
-      { accessorKey: 'jenis', header: 'Jenis' },
-      { accessorKey: 'qty', header: 'Jumlah' },
+      { accessorKey: 'jenis', header: 'Jenis', size: 100 },
+      { accessorKey: 'qty', header: 'Jumlah', size: 100 },
       {
         accessorKey: 'tahun_pengadaan', header: 'Tgl Pengadaan', cell: ({ getValue }) => {
           const value = getValue() as string; return value?.slice(0, 10)
@@ -51,15 +52,17 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
       },
       { accessorKey: 'kondisi', header: 'Kondisi' },
       { accessorKey: 'lokasi', header: 'Lokasi' },
-      { accessorKey: 'status_op', header: 'Status Op' , cell: ({ getValue }) => {
+      {
+        accessorKey: 'status_op', header: 'Status Op', size: 110, cell: ({ getValue }) => {
           const value = getValue() as boolean; return value ? "Ya" : "Tidak"
-        }},
+        }
+      },
       { accessorKey: 'ket', header: 'Ket' },
       { accessorKey: 'ip', header: 'IP Address' },
       { accessorKey: 'mac', header: 'Mac Address' },
-      { accessorKey: 'created_by', header: 'User' },
+      { accessorKey: 'created_by', header: 'User', size: 100 },
       {
-        accessorKey: 'created_at', header: 'Tgl Input', cell: ({ getValue }) => {
+        accessorKey: 'created_at', header: 'Tgl Input', size: 120, cell: ({ getValue }) => {
           const value = getValue() as string; return value?.slice(0, 10)
         }
       },
@@ -92,41 +95,52 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
   })
 
   return (
-    <Table striped bordered hover responsive className="mt-3">
-      <thead>
-        {table.getHeaderGroups().map(hg => (
-          <tr key={hg.id}>
-            {hg.headers.map(h => (
-              <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default' }}>
-                <div className="d-flex align-items-center justify-content-between" style={{ userSelect: "none" }}>
-                  {flexRender(h.column.columnDef.header, h.getContext())}
+    <TableWrapper>
+      <Table
+        striped
+        bordered
+        hover
+        className="table table-bordered mb-0"
+        style={{
+          tableLayout: 'fixed',
+          minWidth: '150%',
+        }}
+      >
+        <thead>
+          {table.getHeaderGroups().map(hg => (
+            <tr key={hg.id}>
+              {hg.headers.map(h => (
+                <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default', width: h.getSize() }}>
+                  <div className="d-flex align-items-center justify-content-between" style={{ userSelect: "none" }}>
+                    {flexRender(h.column.columnDef.header, h.getContext())}
 
-                  {h.column.getCanSort() && (
-                    <span>
-                      {h.column.getIsSorted() === 'asc' && '▲'}
-                      {h.column.getIsSorted() === 'desc' && '▼'}
-                      {!h.column.getIsSorted() && '⇅'}
-                    </span>
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
+                    {h.column.getCanSort() && (
+                      <span>
+                        {h.column.getIsSorted() === 'asc' && '▲'}
+                        {h.column.getIsSorted() === 'desc' && '▼'}
+                        {!h.column.getIsSorted() && '⇅'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
 
-      <tbody>
-        {table.getRowModel().rows.map(row => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map(cell => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+        <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </TableWrapper>
   );
 };
 
