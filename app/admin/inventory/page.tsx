@@ -7,12 +7,14 @@ import InventoryForm from '../../components/InventoryForm';
 import InventoryList from '../../components/InventoryList';
 import { Barang } from '../../types/Barang';
 import { motion } from "motion/react";
+import { Form } from 'react-bootstrap';
 
 export default function Admin() {
   const { user, isChecking, setLoading } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [editingItem, setEditingItem] = useState<Barang | null>(null);
+  const [tableFilter, setTableFilter] = useState<string>("")
 
   const handleDelete = (id: string) => {
     console.log(id)
@@ -44,8 +46,20 @@ export default function Admin() {
     >
       <h1>Manajemen Inventaris</h1>
       <InventoryForm editingItem={editingItem} />
-      <h2 className="mt-4">Inventory List</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="mt-4">Inventory List</h2>
+        <Form.Control
+          style={{ maxWidth: '300px' }}
+          type="text"
+          name="nama"
+          value={tableFilter}
+          onChange={(e) => setTableFilter(e.target.value)}
+          placeholder='Cari...'
+        />
+      </div>
       <InventoryList
+        setGlobalFilter={setTableFilter}
+        globalFilter={tableFilter}
         setEditingItem={setEditingItem}
         onDelete={handleDelete}
         readOnly={user?.role === 'user' && true}

@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { History } from '@/app/types/History'
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { Table } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 
 const columns: ColumnDef<History>[] = [
   {
@@ -17,9 +18,18 @@ const columns: ColumnDef<History>[] = [
   },
   {
     accessorKey: 'created_at',
-    header: "Tgl Login", 
+    header: "Tgl Login",
     cell: ({ getValue }) => {
-      const value = getValue() as string; return value?.slice(0, 10)
+      const formatted = new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).format(new Date(getValue() as string)).replaceAll('/', '-')
+
+      return formatted
     }
   }
 ]
@@ -33,20 +43,20 @@ function LogHistory() {
   useEffect(() => {
     const getHistory = async () => {
       try {
-        const res = await fetch(`/api/history`, {credentials: 'include'})
+        const res = await fetch(`/api/history`, { credentials: 'include' })
         const payload = await res.json()
-  
-        if(!res.ok) {
+
+        if (!res.ok) {
           alert(payload.error)
           return
         }
-  
+
         setHistory(payload)
       } catch (error) {
         alert(error)
       }
     }
-    
+
     getHistory()
   }, [])
 
@@ -77,6 +87,16 @@ function LogHistory() {
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
       <h1>History Login</h1>
+      <div className="d-flex justify-content-end align-items-center">
+        <Form.Control
+          style={{ maxWidth: '300px' }}
+          type="text"
+          name="nama"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder='Cari...'
+        />
+      </div>
       <Table striped bordered hover responsive className="mt-3">
         <thead>
           {table.getHeaderGroups().map(hg => (

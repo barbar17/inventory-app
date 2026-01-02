@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Form } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap'
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useAuth } from '@/app/components/AuthProvider';
 import { motion } from 'motion/react'
+
 
 interface GetUser {
   username: string,
@@ -86,7 +87,17 @@ export default function ManageUsers() {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <h1>Manage Users</h1>
-      <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add GetUser</Button>
+      <div className="d-flex justify-content-between align-items-center">
+        <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add GetUser</Button>
+        <Form.Control
+          style={{ maxWidth: '300px' }}
+          type="text"
+          name="nama"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder='Cari...'
+        />
+      </div>
       <Table striped bordered hover responsive className="mt-3">
         <thead>
           {table.getHeaderGroups().map(hg => (

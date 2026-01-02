@@ -4,13 +4,14 @@ import { Barang } from '../types/Barang';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
 
-const InventoryList = ({ setEditingItem, onDelete, readOnly = false }: {
+const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
+  setGlobalFilter: Dispatch<SetStateAction<string>>,
   onDelete: (id: string) => void,
-  readOnly?: boolean
+  readOnly?: boolean,
+  globalFilter: string,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
-  const [globalFilter, setGlobalFilter] = useState("");
   const [barang, setBarang] = useState<Barang[]>([]);
 
   useEffect(() => {

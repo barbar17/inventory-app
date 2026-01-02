@@ -7,13 +7,15 @@ const barangDefaultValue: Barang = {
   nama: "",
   jenis: "Goods",
   qty: 1,
-  tahunPengadaan: "",
+  tahun_pengadaan: "",
   kondisi: "Baru",
   lokasi: "",
-  statusOperasional: true,
+  status_op: true,
   ket: "",
   ip: "",
   mac: "",
+  created_by: "", 
+  created_at: "",
 }
 
 const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
@@ -87,7 +89,7 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
           <Form.Control
             type="date"
             name="tahun_pengadaan"
-            value={item.tahunPengadaan}
+            value={item.tahun_pengadaan}
             onChange={handleChange}
           />
         </ColForm>
