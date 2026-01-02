@@ -6,11 +6,6 @@ import { History } from '@/app/types/History'
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { Table } from 'react-bootstrap'
 
-const mock: History[] = [
-  {id: 1, username: 'user1', created_at: '2024-01-01'},
-  {id: 2, username: 'admin1', created_at: '2025-01-01'},
-]
-
 const columns: ColumnDef<History>[] = [
   {
     accessorKey: 'id',
@@ -22,7 +17,10 @@ const columns: ColumnDef<History>[] = [
   },
   {
     accessorKey: 'created_at',
-    header: "Tgl Login",
+    header: "Tgl Login", 
+    cell: ({ getValue }) => {
+      const value = getValue() as string; return value?.slice(0, 10)
+    }
   }
 ]
 
@@ -30,14 +28,34 @@ function LogHistory() {
   const { setLoading, isChecking } = useAuth()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [history, setHistory] = useState<History[]>([])
+
+  useEffect(() => {
+    const getHistory = async () => {
+      try {
+        const res = await fetch(`/api/history`, {credentials: 'include'})
+        const payload = await res.json()
   
+        if(!res.ok) {
+          alert(payload.error)
+          return
+        }
+  
+        setHistory(payload)
+      } catch (error) {
+        alert(error)
+      }
+    }
+    
+    getHistory()
+  }, [])
 
   useEffect(() => {
     setLoading(false)
   }, [isChecking])
 
   const table = useReactTable<History>({
-    data: mock,
+    data: history,
     columns,
     state: {
       sorting,

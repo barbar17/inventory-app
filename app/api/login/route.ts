@@ -32,8 +32,14 @@ export async function POST(req: Request) {
             secure: false,
             sameSite: "lax",
             path: "/",
-            maxAge: 60 * 60 * 60 * 12 //MEANS 12 HOURS
+            maxAge: 60 * 60 * 12 //MEANS 12 HOURS
         })
+
+        try {
+            const [resLog] = await DB.execute(`INSERT INTO login_history (username) VALUES (?)`, [user.username])  
+        } catch (error: any) {
+            throw new Error(`Gagal menambahkan kelas, ${error.message}`)
+        }
 
         return res
     } catch (error:any) {
