@@ -2,22 +2,20 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
-export function authHandler(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (pathname.startsWith('/api/login')) {
     return NextResponse.next();
   }
 
-  const authHeader = request.headers.get('X-IAK');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const token = request.cookies.get('X-IAK')?.value;
+  if (!token) {
     return new NextResponse(JSON.stringify({ error: 'Unauthorized: No token' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  const token = authHeader.split(' ')[1];
-
+  
   try {
     jwt.verify(token, process.env.JWT_SECRET!);
     return NextResponse.next();

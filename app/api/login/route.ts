@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         res.cookies.set("X-IAK", token, {
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
+            sameSite: "lax",
             path: "/",
             maxAge: 60 * 60 * 60 * 12 //MEANS 12 HOURS
         })

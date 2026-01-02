@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    setIsChecking(false)
     setLoading(true)
     if (!user && pathname !== '/login' && isCheckAuth === false) {
       setUser(null);
