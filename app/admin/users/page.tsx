@@ -1,44 +1,26 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
-import { Table, Button } from 'react-bootstrap'
+import { Table, Button, Modal } from 'react-bootstrap'
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useAuth } from '@/app/components/AuthProvider';
 import { motion } from 'motion/react'
+import { User } from '@/app/types/User';
 
-
-interface GetUser {
-  username: string,
-  role: string,
+const userDefault: User = {
+  username: "",
+  password: "",
+  role: "user",
 }
-
-const columns: ColumnDef<GetUser>[] = [
-  {
-    accessorKey: 'username',
-    header: "Username",
-  },
-  {
-    accessorKey: 'role',
-    header: "Role",
-  },
-  {
-    id: 'aksi',
-    header: "Aksi",
-    cell: ({ row }) => (
-      <>
-        <Button variant="warning" size="sm" onClick={() => console.log(row.original)} className="me-2">Edit</Button>
-        <Button variant="danger" size="sm" onClick={() => console.log(row.original)}>Delete</Button>
-      </>
-    )
-  },
-]
 
 export default function ManageUsers() {
   const { setLoading, isChecking } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [user, setUser] = useState<GetUser[]>([])
+  const [users, setUsers] = useState<User[]>([])
+  const [user, setUser] = useState<User>(userDefault);
+  const [editingUser, setEditingUser] = useState<boolean>(false);
 
   useEffect(() => {
     async function getUser() {
@@ -51,7 +33,7 @@ export default function ManageUsers() {
           return
         }
 
-        setUser(payload)
+        setUsers(payload)
       } catch (error) {
         alert(error)
       }
@@ -64,8 +46,44 @@ export default function ManageUsers() {
     setLoading(false)
   }, [isChecking])
 
-  const table = useReactTable<GetUser>({
-    data: user,
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log(user)
+  }
+
+  const columns = useMemo<ColumnDef<User>[]>(() => {
+    return [
+      {
+        accessorKey: 'username',
+        header: "Username",
+      },
+      {
+        accessorKey: 'role',
+        header: "Role",
+      },
+      {
+        id: 'aksi',
+        header: "Aksi",
+        cell: ({ row }) => (
+          <>
+            <Button variant="warning" size="sm" onClick={() => {
+              setUser({
+                username: row.original.username,
+                password: row.original.password,
+                role: row.original.role
+              });
+              setEditingUser(true);
+              setShowModal(true);
+            }} className="me-2">Edit</Button>
+            <Button variant="danger" size="sm" onClick={() => console.log(row.original)}>Delete</Button>
+          </>
+        )
+      },
+    ]
+  }, [])
+
+  const table = useReactTable<User>({
+    data: users,
     columns,
     state: {
       sorting,
@@ -86,9 +104,9 @@ export default function ManageUsers() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <h1>Manage Users</h1>
+      <h1>Manajemen Users</h1>
       <div className="d-flex justify-content-between align-items-center">
-        <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Add GetUser</Button>
+        <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3">Tambah User</Button>
         <Form.Control
           style={{ maxWidth: '300px' }}
           type="text"
@@ -134,42 +152,42 @@ export default function ManageUsers() {
         </tbody>
       </Table>
 
-      {/* <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingUser ? 'Edit GetUser' : 'Add GetUser'}</Modal.Title>
+          <Modal.Title>{editingUser ? 'Edit User' : 'Add User'}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
             <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
-                value={newUser.username}
-                onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                value={user.username}
+                onChange={(e) => setUser({ ...user, username: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
-                value={newUser.password}
-                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                value={user.password}
+                onChange={(e) => setUser({ ...user, password: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Role</Form.Label>
-              <Form.Select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
-                <option value="user">GetUser</option>
+              <Form.Select value={user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
+                <option value="user">User</option>
                 <option value="admin">Admin</option>
               </Form.Select>
             </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={() => {console.log("save")}}>Save</Button>
-        </Modal.Footer>
-      </Modal> */}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>Batal</Button>
+            <Button variant="primary" type='submit'>Simpan</Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </motion.div>
   );
 }

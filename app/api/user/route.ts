@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 //GET ALL USER
 export async function GET() {
     try {
-        const [rows] = await DB.query('SELECT username, role FROM user')
+        const [rows] = await DB.query('SELECT username, password, role FROM user')
 
         return NextResponse.json(rows);
     } catch (error) {

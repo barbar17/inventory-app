@@ -14,11 +14,26 @@ const barangDefaultValue: Barang = {
   ket: "",
   ip: "",
   mac: "",
-  created_by: "", 
+  created_by: "",
   created_at: "",
 }
 
-const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
+const ColForm = ({ children, md = 6, label }: {
+  children: React.ReactNode,
+  md?: number,
+  label: string,
+}) => {
+  return (
+    <Col md={md}>
+      <Form.Group className="mb-3" >
+        <Form.Label className='fw-bold'>{label}</Form.Label>
+        {children}
+      </Form.Group>
+    </Col>
+  )
+}
+
+const InventoryForm = ({ editingItem }: { editingItem: Barang | null }) => {
   const [item, setItem] = useState<Barang>(barangDefaultValue);
 
   useEffect(() => {
@@ -27,6 +42,10 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
     }
   }, [editingItem]);
 
+  useEffect(() => {
+    setItem({...item, ip: '', mac: ''})
+  }, [item.jenis])
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setItem({ ...item, [name]: value });
@@ -34,32 +53,15 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (!item.id) {
-      item.id = Date.now().toString(); // Simple ID generation
-    }
-    setItem(barangDefaultValue);
+    console.log(item);
   };
-
-  const ColForm = ({ children, md = 6, label }: {
-    children: React.ReactNode,
-    md?: number,
-    label: string,
-  }) => {
-    return (
-      <Col md={md}>
-        <Form.Group className="mb-3">
-          <Form.Label className='fw-bold'>{label}</Form.Label>
-          {children}
-        </Form.Group>
-      </Col>
-    )
-  }
 
   return (
     <Form onSubmit={handleSubmit}>
       <Row>
         <ColForm md={0} label='Nama Perangkat'>
           <Form.Control
+            required
             type="text"
             name="nama"
             value={item.nama}
@@ -69,13 +71,14 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
       </Row>
       <Row>
         <ColForm label='Jenis Perangkat'>
-          <Form.Select name="type" value={item.jenis} onChange={handleChange}>
+          <Form.Select name="jenis" value={item.jenis} onChange={handleChange} required>
             <option value="Goods">Goods</option>
             <option value="IT Device">IT Network Device</option>
           </Form.Select>
         </ColForm>
         <ColForm label='Jumlah'>
           <Form.Control
+            required
             type="number"
             name="qty"
             value={item.qty}
@@ -85,8 +88,9 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
         </ColForm>
       </Row>
       <Row>
-                <ColForm label='Tahun Pengadaan'>
+        <ColForm label='Tahun Pengadaan'>
           <Form.Control
+            required
             type="date"
             name="tahun_pengadaan"
             value={item.tahun_pengadaan}
@@ -94,7 +98,7 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
           />
         </ColForm>
         <ColForm label='Kondisi'>
-          <Form.Select name="kondisi" value={item.kondisi} onChange={handleChange}>
+          <Form.Select name="kondisi" value={item.kondisi} onChange={handleChange} required>
             <option value="Baru">Baru</option>
             <option value="Bagus">Bagus</option>
             <option value="Kurang Baik">Kurang Baik</option>
@@ -104,34 +108,17 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
       </Row>
       <Row>
         <ColForm label='Status Operasional'>
-          <Form.Select name="status_op" value={item.kondisi} onChange={handleChange}>
+          <Form.Select name="status_op" value={item.kondisi} onChange={handleChange} required>
             <option value="1">Ya</option>
             <option value="0">Tidak</option>
           </Form.Select>
         </ColForm>
         <ColForm label='Lokasi'>
           <Form.Control
+            required
             type="text"
             name="lokasi"
             value={item.lokasi}
-            onChange={handleChange}
-          />
-        </ColForm>
-      </Row>
-      <Row>
-        <ColForm label='IP Address'>
-          <Form.Control
-            type="text"
-            name="ip"
-            value={item.ip}
-            onChange={handleChange}
-          />
-        </ColForm>
-        <ColForm label='Mac Address'>
-          <Form.Control
-            type="text"
-            name="mac"
-            value={item.mac}
             onChange={handleChange}
           />
         </ColForm>
@@ -140,14 +127,16 @@ const InventoryForm = ({ editingItem }: {editingItem: Barang | null}) => {
         <Row>
           <ColForm label='IP Address'>
             <Form.Control
+              required
               type="text"
               name="ip"
               value={item.ip}
               onChange={handleChange}
             />
           </ColForm>
-          <ColForm label='IP Address'>
+          <ColForm label='Mac Address'>
             <Form.Control
+              required
               type="text"
               name="mac"
               value={item.mac}
