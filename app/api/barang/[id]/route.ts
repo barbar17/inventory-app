@@ -1,28 +1,14 @@
 import DB from "@/app/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-import { BarangSchema, BarangReq } from "../barang/BarangSchema";
+import { BarangSchema, BarangReq } from "../../barang/BarangSchema";
 import { z } from "zod";
 
-export async function GET() {
-    try {
-        const [rows]: any[] = await DB.query(`
-            SELECT id, nama, jenis, qty, tahun_pengadaan, kondisi, lokasi,
-                status_op, ket, IF(ip = '', '-', ip) AS ip, IF(mac = '', '-', mac) AS mac, created_by, created_at 
-            FROM barang
-        `)
-
-        const data = rows.map((rows: any, index: number) => ({
-            no: index + 1,
-            ...rows
-        }))
-
-        return NextResponse.json(data)
-    } catch (error) {
-        return NextResponse.json({ error: error }, { status: 500 })
+export async function PATCH(req: NextRequest, {params}: {params: Promise<{id: string}>}) {
+    const {id} = await params;
+    if (!id) {
+      throw new Error(`id barang tidak boleh kosong`);
     }
-}
 
-export async function POST(req: NextRequest) {
     const conn = await DB.getConnection()
     try {
         const payload = await req.json()
@@ -31,7 +17,7 @@ export async function POST(req: NextRequest) {
         await conn.beginTransaction()
 
         try {
-            const [res] = await conn.execute(`INSERT INTO barang (nama, jenis, qty, tahun_pengadaan, kondisi, lokasi, status_op, ket, ip, mac, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+            const [res] = await conn.execute(`UPDATE barang SET nama = ?, jenis = ?, qty = ?, tahun_pengadaan = ?, kondisi = ?, lokasi = ?, status_op = ?, ket = ?, ip = ?, mac = ?, created_by = ? WHERE id = ?`, [
                 body.nama,
                 body.jenis,
                 body.qty,
@@ -43,6 +29,7 @@ export async function POST(req: NextRequest) {
                 body.ip,
                 body.mac,
                 body.created_by,
+                id,
             ])
         } catch (error) {
             throw new Error(`gagal menambahkan barang, ${error}`);
@@ -60,5 +47,25 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({"error": error}, { status: 400 })
     } finally {
         await conn.release();
+    }
+}
+
+export async function DELETE({params}: {params: Promise<{id: string}>}) {
+    const {id} = await params;
+    if (!id) {
+      throw new Error(`id barang tidak boleh kosong`);
+    }
+
+    const conn = await DB.getConnection()
+    await conn.beginTransaction();
+    try {
+      const [res] = await conn.execute(`DELETE FROM barang WHERE id = ?`, [id]);
+      await conn.commit();
+      return NextResponse.json("success");
+    } catch (error) {
+      await conn.rollback();
+      return NextResponse.json({ "error": error }, { status: 500 });
+    } finally {
+      conn.release();
     }
 }
