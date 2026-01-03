@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
+//CHECK USER TOKEN
 export async function GET() {
     const cookieStore = await cookies()
     const token  =  cookieStore.get("X-IAK")?.value
