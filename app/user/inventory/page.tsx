@@ -9,6 +9,7 @@ import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { PrintTable } from '@/app/components/PrintTable';
 import { Table } from '@tanstack/react-table';
+import { ExportToXlsx } from '@/app/components/ExportToXlsx';
 
 export default function UserInventory() {
   const { user, isChecking, setLoading } = useAuth();
@@ -25,6 +26,14 @@ export default function UserInventory() {
   const handlePrint = () => {
     if (tableComponent) {
       PrintTable(tableComponent, { title: 'Inventaris' });
+    } else {
+      alert("table tidak ditemukan");
+    }
+  }
+
+  const handleExport = () => {
+    if (tableComponent) {
+      ExportToXlsx(tableComponent, 'Inventaris');
     } else {
       alert("table tidak ditemukan");
     }
@@ -56,9 +65,14 @@ export default function UserInventory() {
     >
       <h1>Inventaris</h1>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <Button type="button" variant="danger" onClick={handlePrint}>
-          Export PDF
-        </Button>
+        <div className="d-flex gap-2">
+          <Button type="button" variant="danger" onClick={handlePrint}>
+            Export PDF
+          </Button>
+          <Button type="button" variant="success" onClick={handleExport}>
+            Export Excel
+          </Button>
+        </div>
         <Form.Control
           style={{ maxWidth: '300px' }}
           type="text"
