@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../components/AuthProvider';
+import { useAuth } from '@/app/components/AuthProvider';
 import { useRouter } from 'next/navigation';
-import InventoryList from '../../components/InventoryList';
-import { Barang } from '../../types/Barang';
+import InventoryList from '@/app/components/InventoryList';
+import { Barang } from '@/app/types/Barang';
 import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { PrintTable } from '@/app/components/PrintTable';

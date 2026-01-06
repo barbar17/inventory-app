@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       router.replace('/login');
     }
+
     setIsChecking(false)
   }, [pathname]);
 

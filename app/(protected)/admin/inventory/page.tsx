@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../components/AuthProvider';
+import { useAuth } from '@/app/components/AuthProvider';
 import { useRouter } from 'next/navigation';
-import InventoryForm from '../../components/InventoryForm';
-import InventoryList from '../../components/InventoryList';
-import { Barang } from '../../types/Barang';
+import InventoryForm from '@/app/components/InventoryForm';
+import InventoryList from '@/app/components/InventoryList';
+import { Barang } from '@/app/types/Barang';
 import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { Table } from '@tanstack/react-table';
