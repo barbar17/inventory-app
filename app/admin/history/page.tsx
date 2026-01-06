@@ -88,7 +88,7 @@ function LogHistory() {
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
       <h1>History Login</h1>
-      <div className="d-flex justify-content-end align-items-center">
+      <div className="d-flex justify-content-end align-items-center mb-2">
         <Form.Control
           style={{ maxWidth: '300px' }}
           type="text"

@@ -23,14 +23,6 @@ export default function UserInventory() {
     console.log(id)
   }
 
-  const handlePrint = () => {
-    if (tableComponent) {
-      PrintTable(tableComponent, { title: 'Inventaris' });
-    } else {
-      alert("table tidak ditemukan");
-    }
-  }
-
   const handleExport = (tipe: string) => {
     if (!tableComponent) {
       alert("table tidak ditemukan");
