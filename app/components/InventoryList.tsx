@@ -1,16 +1,17 @@
 import { Dispatch, SetStateAction, useState, useMemo, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import { Barang } from '../types/Barang';
-import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { Table as TableType, ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
 import TableWrapper from './TableWrapper';
 
-const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false }: {
+const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
   setGlobalFilter: Dispatch<SetStateAction<string>>,
   onDelete: (id: string) => void,
   readOnly?: boolean,
   globalFilter: string,
+  setTableComponent: Dispatch<SetStateAction<TableType<Barang> | null>>,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
   const [barang, setBarang] = useState<Barang[]>([]);
@@ -48,6 +49,9 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
       {
         accessorKey: 'tahun_pengadaan', header: 'Tgl Pengadaan', cell: ({ getValue }) => {
           const value = getValue() as string; return value?.slice(0, 10)
+        },
+        meta: {
+          print: (value) => String(value).slice(0, 10),
         }
       },
       { accessorKey: 'kondisi', header: 'Kondisi' },
@@ -55,18 +59,21 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
       {
         accessorKey: 'status_op', header: 'Status Op', size: 110, cell: ({ getValue }) => {
           const value = getValue() as boolean; return value ? "Ya" : "Tidak"
+        },
+        meta: {
+          print: (value) => Boolean(value) ? "Ya" : "Tidak",
         }
       },
       { accessorKey: 'ket', header: 'Ket' },
       { accessorKey: 'ip', header: 'IP Address' },
       { accessorKey: 'mac', header: 'Mac Address' },
-      { accessorKey: 'created_by', header: 'User', size: 100 },
-      {
-        accessorKey: 'created_at', header: 'Tgl Input', size: 120, cell: ({ getValue }) => {
-          const value = getValue() as string; return value?.slice(0, 10)
-        }
-      },
       ...(!readOnly ? [
+        { accessorKey: 'created_by', header: 'User Input', size: 120 },
+        {
+          accessorKey: 'created_at', header: 'Tgl Input', size: 120, cell: ({ getValue }: { getValue: any }) => {
+            const value = getValue() as string; return value?.slice(0, 10)
+          }
+        },
         {
           id: 'aksi', header: 'Aksi', cell: (row: any) => (
             <>
@@ -94,6 +101,10 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
     enableSortingRemoval: false,
   })
 
+  useEffect(() => {
+    setTableComponent(table);
+  }, [table])
+
   return (
     <TableWrapper>
       <Table
@@ -103,7 +114,7 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
         className="table table-bordered mb-0"
         style={{
           tableLayout: 'fixed',
-          minWidth: '150%',
+          minWidth: readOnly === true ? '150%' : '100%',
         }}
       >
         <thead>

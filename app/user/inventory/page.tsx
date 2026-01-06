@@ -3,15 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
-import InventoryForm from '../../components/InventoryForm';
 import InventoryList from '../../components/InventoryList';
 import { Barang } from '../../types/Barang';
 import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
-import { Table } from '@tanstack/react-table';
 import { PrintTable } from '@/app/components/PrintTable';
+import { Table } from '@tanstack/react-table';
 
-export default function AdminInventory() {
+export default function UserInventory() {
   const { user, isChecking, setLoading } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState([]);
@@ -55,10 +54,8 @@ export default function AdminInventory() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <h1>Manajemen Inventaris</h1>
-      <InventoryForm editingItem={editingItem} />
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="mt-4">Inventory List</h2>
+      <h1>Inventaris</h1>
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <Button type="button" variant="danger" onClick={handlePrint}>
           Export PDF
         </Button>
@@ -71,14 +68,16 @@ export default function AdminInventory() {
           placeholder='Cari...'
         />
       </div>
-      <InventoryList
-        setGlobalFilter={setTableFilter}
-        globalFilter={tableFilter}
-        setEditingItem={setEditingItem}
-        onDelete={handleDelete}
-        readOnly={user?.role === 'user' && true}
-        setTableComponent={setTableComponent}
-      />
+      <div className='print-area'>
+        <InventoryList
+          setGlobalFilter={setTableFilter}
+          globalFilter={tableFilter}
+          setEditingItem={setEditingItem}
+          onDelete={handleDelete}
+          readOnly={user?.role === 'user' && true}
+          setTableComponent={setTableComponent}
+        />
+      </div>
     </motion.div>
   );
 }

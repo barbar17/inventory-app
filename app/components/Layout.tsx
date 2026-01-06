@@ -19,11 +19,11 @@ const Layout = ({ children }: {children: React.ReactNode}) => {
                 <Nav.Link as={Link} href="/admin/users">Manage Users</Nav.Link>
                 <Nav.Link as={Link} href="/admin/history">History</Nav.Link>
               </>
-            ) : (
+            ) : user?.role === 'user' ? (
               <>
                 <Nav.Link as={Link} href="/user/inventory">Inventory</Nav.Link>
               </>
-            )}
+            ) : null}
           </Nav>
           {user && (
             <Button variant="outline-light" onClick={logout}>Logout</Button>
