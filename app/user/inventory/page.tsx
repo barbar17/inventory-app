@@ -31,11 +31,16 @@ export default function UserInventory() {
     }
   }
 
-  const handleExport = () => {
-    if (tableComponent) {
-      ExportToXlsx(tableComponent, 'Inventaris');
-    } else {
+  const handleExport = (tipe: string) => {
+    if (!tableComponent) {
       alert("table tidak ditemukan");
+      return;
+    }
+
+    if (tipe === 'pdf') {
+      PrintTable(tableComponent, { title: 'Inventaris' });
+    } else if (tipe === 'excel') {
+      ExportToXlsx(tableComponent, 'Inventaris');
     }
   }
 
@@ -66,11 +71,11 @@ export default function UserInventory() {
       <h1>Inventaris</h1>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex gap-2">
-          <Button type="button" variant="danger" onClick={handlePrint}>
-            Export PDF
+          <Button type="button" variant="danger" onClick={() => handleExport('pdf')}>
+            <i className="bi bi-file-earmark-pdf-fill"></i><span style={{marginLeft: "4px"}}>Export PDF</span>
           </Button>
-          <Button type="button" variant="success" onClick={handleExport}>
-            Export Excel
+          <Button type="button" variant="success" onClick={() => handleExport('excel')}>
+            <i className="bi bi-file-earmark-excel-fill"></i><span style={{marginLeft: "4px"}}>Export Excel</span>
           </Button>
         </div>
         <Form.Control

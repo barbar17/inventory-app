@@ -87,5 +87,4 @@ export function PrintTable<T>(table: Table<T>, options: PrintOptions) {
   printWindow.document.close()
 
   printWindow.focus()
-  printWindow.print()
 }
