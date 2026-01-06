@@ -9,7 +9,6 @@ type PrintOptions = {
 export function PrintTable<T>(table: Table<T>, options: PrintOptions) {
   const { title } = options;
 
-
   const headers = table.getVisibleLeafColumns().map(col => `<th>${String(col.columnDef.header)}</th>`);
 
   const rows = table.getPrePaginationRowModel().rows.map(row => `

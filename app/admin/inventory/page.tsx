@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { Table } from '@tanstack/react-table';
 import { PrintTable } from '@/app/components/PrintTable';
+import { ExportToXlsx } from '@/app/components/ExportToXlsx';
 
 export default function AdminInventory() {
   const { user, isChecking, setLoading } = useAuth();
@@ -23,11 +24,16 @@ export default function AdminInventory() {
     console.log(id)
   }
 
-  const handlePrint = () => {
-    if (tableComponent) {
-      PrintTable(tableComponent, { title: 'Inventaris' });
-    } else {
+  const handleExport = (tipe: string) => {
+    if (!tableComponent) {
       alert("table tidak ditemukan");
+      return;
+    }
+
+    if (tipe === 'pdf') {
+      PrintTable(tableComponent, { title: 'Inventaris' });
+    } else if (tipe === 'excel') {
+      ExportToXlsx(tableComponent, 'Inventaris');
     }
   }
 
@@ -57,11 +63,16 @@ export default function AdminInventory() {
     >
       <h1>Manajemen Inventaris</h1>
       <InventoryForm editingItem={editingItem} />
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="mt-4">Inventory List</h2>
-        <Button type="button" variant="danger" onClick={handlePrint}>
-          Export PDF
-        </Button>
+      <h2 className="mt-4">Inventory List</h2>
+      <div className="d-flex justify-content-between align-items-center mb-2 pt-2">
+        <div className="d-flex gap-2">
+          <Button type="button" variant="danger" onClick={() => handleExport('pdf')}>
+            <i className="bi bi-file-earmark-pdf-fill"></i><span style={{ marginLeft: "4px" }}>Export PDF</span>
+          </Button>
+          <Button type="button" variant="success" onClick={() => handleExport('excel')}>
+            <i className="bi bi-file-earmark-excel-fill"></i><span style={{ marginLeft: "4px" }}>Export Excel</span>
+          </Button>
+        </div>
         <Form.Control
           style={{ maxWidth: '300px' }}
           type="text"

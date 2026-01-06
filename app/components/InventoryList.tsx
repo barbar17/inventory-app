@@ -72,6 +72,9 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
         {
           accessorKey: 'created_at', header: 'Tgl Input', size: 120, cell: ({ getValue }: { getValue: any }) => {
             const value = getValue() as string; return value?.slice(0, 10)
+          },
+          meta: {
+            print: (value: any) => String(value).slice(0, 10),
           }
         },
         {

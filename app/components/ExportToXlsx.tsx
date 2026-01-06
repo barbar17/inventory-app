@@ -6,7 +6,8 @@ export async function ExportToXlsx<T>(table: Table<T>, filename: string) {
   const workbook = new ExcelJS.Workbook()
   const sheet = workbook.addWorksheet(filename)
 
-  const columns = table.getVisibleLeafColumns()
+  const excludedColumnIds = ['aksi'];
+  const columns = table.getVisibleLeafColumns().filter(col => !excludedColumnIds.includes(col.id));
   const rows = table.getPrePaginationRowModel().rows
 
   sheet.columns = columns.map(col => ({

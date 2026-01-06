@@ -23,8 +23,8 @@ export default function Login() {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: String(data.username),
-          password: String(data.password),
+          username: String(data.username).trim(),
+          password: String(data.password).trim(),
         })
       })
 
