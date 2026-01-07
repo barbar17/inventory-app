@@ -2,22 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Barang } from '../types/Barang';
 
-const barangDefaultValue: Barang = {
-  id: "",
-  nama: "",
-  jenis: "Goods",
-  qty: 1,
-  tahun_pengadaan: "",
-  kondisi: "Baru",
-  lokasi: "",
-  status_op: true,
-  ket: "",
-  ip: "",
-  mac: "",
-  created_by: "",
-  created_at: "",
-}
-
 const ColForm = ({ children, md = 6, label }: {
   children: React.ReactNode,
   md?: number,
@@ -34,6 +18,23 @@ const ColForm = ({ children, md = 6, label }: {
 }
 
 const InventoryForm = ({ editingItem }: { editingItem: Barang | null }) => {
+  const today = new Date().toISOString().split("T")[0];
+  const barangDefaultValue: Barang = {
+    id: "",
+    nama: "",
+    jenis: "Goods",
+    qty: 1,
+    tahun_pengadaan: today,
+    kondisi: "Baru",
+    lokasi: "",
+    status_op: true,
+    ket: "",
+    ip: "",
+    mac: "",
+    created_by: "",
+    created_at: "",
+  }
+
   const [item, setItem] = useState<Barang>(barangDefaultValue);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const InventoryForm = ({ editingItem }: { editingItem: Barang | null }) => {
   }, [editingItem]);
 
   useEffect(() => {
-    setItem({...item, ip: '', mac: ''})
+    setItem({ ...item, ip: '', mac: '' })
   }, [item.jenis])
 
   const handleChange = (e: any) => {
