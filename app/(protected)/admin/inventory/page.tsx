@@ -11,6 +11,8 @@ import { Form, Button } from 'react-bootstrap';
 import { Table } from '@tanstack/react-table';
 import { PrintTable } from '@/app/components/PrintTable';
 import { ExportToXlsx } from '@/app/components/ExportToXlsx';
+import ConfirmModal from '@/app/components/ConfirmModal';
+import { toast } from 'react-toastify';
 
 export default function AdminInventory() {
   const { user, isChecking, setLoading } = useAuth();
@@ -20,10 +22,39 @@ export default function AdminInventory() {
   const [tableFilter, setTableFilter] = useState<string>("")
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
   const [barang, setBarang] = useState<Barang[]>([]);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [deleteBarang, setDeleteBarang] = useState<{ id: string, nama: string } | null>(null);
 
-  const handleDelete = (id: string) => {
-    console.log(id)
+  const onDelete = (id: string, nama: string) => {
+    setDeleteBarang({ id, nama })
+    setShowConfirm(true);
   }
+
+  const onConfirmDelete = async () => {
+    if (!deleteBarang) toast.error("Barang tidak ditemukan");
+    if (!deleteBarang?.id) toast.error("ID barang tidak boleh kosong");
+    setLoading(true);
+
+    try {
+      const res = await fetch(`/api/barang/${deleteBarang?.id}`, {method: 'DELETE'})
+      const payload = await res.json();
+      if (!res.ok) {
+        toast.error(payload.error);
+        return;
+      }
+
+      toast.success(`Berhasil hapus ${deleteBarang?.nama}`);
+      getBarang();
+    } catch (error) {
+      toast.error(String(error));
+    } finally {
+      setLoading(false);
+      setDeleteBarang(null);
+    }
+
+    setShowConfirm(false);
+  }
+
 
   const handleExport = (tipe: string) => {
     if (!tableComponent) {
@@ -107,11 +138,17 @@ export default function AdminInventory() {
         setGlobalFilter={setTableFilter}
         globalFilter={tableFilter}
         setEditingItem={setEditingItem}
-        onDelete={handleDelete}
+        onDelete={onDelete}
         readOnly={user?.role === 'user' && true}
         setTableComponent={setTableComponent}
         getBarang={getBarang}
         barang={barang}
+      />
+      <ConfirmModal
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        item={deleteBarang}
+        handleConfirm={onConfirmDelete}
       />
     </motion.div>
   );

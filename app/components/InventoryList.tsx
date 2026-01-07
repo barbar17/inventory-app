@@ -8,7 +8,7 @@ import TableWrapper from './TableWrapper';
 const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
   setGlobalFilter: Dispatch<SetStateAction<string>>,
-  onDelete: (id: string) => void,
+  onDelete: (id: string, nama: string) => void,
   readOnly?: boolean,
   globalFilter: string,
   setTableComponent: Dispatch<SetStateAction<TableType<Barang> | null>>,
@@ -16,7 +16,7 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
   barang: Barang[],
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
-    
+
   useEffect(() => {
     getBarang()
   }, [])
@@ -63,16 +63,16 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
           }
         },
         {
-          id: 'aksi', header: 'Aksi', cell: (row: any) => (
+          id: 'aksi', header: 'Aksi', cell: ({ row }: { row: any }) => (
             <>
               <Button variant="warning" size="sm" onClick={() => console.log(row.original)} className="me-2">Edit</Button>
-              <Button variant="danger" size="sm" onClick={() => console.log(row.original)}>Delete</Button>
+              <Button variant="danger" size="sm" onClick={() => onDelete(row.original.id, row.original.nama)}>Delete</Button>
             </>
           )
         },
       ] : [])
     ]
-  }, [readOnly]);
+  }, [readOnly, barang]);
 
   const table = useReactTable<Barang>({
     data: barang,

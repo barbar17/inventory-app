@@ -50,7 +50,7 @@ export async function PATCH(req: NextRequest, {params}: {params: Promise<{id: st
     }
 }
 
-export async function DELETE({params}: {params: Promise<{id: string}>}) {
+export async function DELETE(req: NextRequest, {params}: {params: Promise<{id: string}>}) {
     const {id} = await params;
     if (!id) {
       throw new Error(`id barang tidak boleh kosong`);

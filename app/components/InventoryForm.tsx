@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { BarangForm } from '../types/Barang';
 import { useAuth } from './AuthProvider';
+import { toast } from 'react-toastify';
 
 const ColForm = ({ children, md = 6, label }: {
   children: React.ReactNode,
@@ -66,14 +67,15 @@ const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | n
 
       const payload = await res.json();
       if (!res.ok) {
-        alert(payload.error);
+        toast.error(String(payload.error));
         return;
       }
 
       setItem(barangDefaultValue);
       getBarang();
+      toast.success("Berhasil menambah barang!");
     } catch (error) {
-      alert(error);
+      toast.error(String(error));
     }
   };
 

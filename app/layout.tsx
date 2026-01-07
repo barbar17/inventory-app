@@ -1,7 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import "react-toastify/dist/ReactToastify.css";
 import './global.css';
 import { AuthProvider } from './components/AuthProvider';
+import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
   title: 'Inventory Manager',
@@ -13,6 +15,7 @@ export default function RootLayout({children}:{children: React.ReactNode}) {
     <html lang="en">
       <body>
         <AuthProvider>
+          <ToastContainer />
           {children}
         </AuthProvider>
       </body>
