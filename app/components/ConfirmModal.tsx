@@ -5,7 +5,7 @@ export default function ConfirmModal({ showConfirm, setShowConfirm, handleConfir
   showConfirm: boolean,
   setShowConfirm: Dispatch<React.SetStateAction<boolean>>,
   item: { id: string, nama: string } | null,
-  handleConfirm: (id: string | undefined) => void,
+  handleConfirm: () => void,
 }) {
   return (
     <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
@@ -21,7 +21,7 @@ export default function ConfirmModal({ showConfirm, setShowConfirm, handleConfir
         <Button variant="secondary" onClick={() => setShowConfirm(false)}>
           Batal
         </Button>
-        <Button variant="danger" onClick={() => handleConfirm(item?.id)}>
+        <Button variant="danger" onClick={handleConfirm}>
           Hapus
         </Button>
       </Modal.Footer>
