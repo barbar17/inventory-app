@@ -5,34 +5,19 @@ import { Table as TableType, ColumnDef, flexRender, getCoreRowModel, getFiltered
 import { Button } from 'react-bootstrap';
 import TableWrapper from './TableWrapper';
 
-const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent }: {
+const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
   setEditingItem: Dispatch<SetStateAction<Barang | null>>,
   setGlobalFilter: Dispatch<SetStateAction<string>>,
   onDelete: (id: string) => void,
   readOnly?: boolean,
   globalFilter: string,
   setTableComponent: Dispatch<SetStateAction<TableType<Barang> | null>>,
+  getBarang: () => Promise<void>,
+  barang: Barang[],
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
-  const [barang, setBarang] = useState<Barang[]>([]);
-
+    
   useEffect(() => {
-    async function getBarang() {
-      try {
-        const res = await fetch("/api/barang", { credentials: "include" });
-        const payload = await res.json()
-
-        if (!res.ok) {
-          alert(payload.error)
-          return
-        }
-
-        setBarang(payload)
-      } catch (error) {
-        alert(error)
-      }
-    }
-
     getBarang()
   }, [])
 

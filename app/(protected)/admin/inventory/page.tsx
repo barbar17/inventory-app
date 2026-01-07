@@ -19,6 +19,7 @@ export default function AdminInventory() {
   const [editingItem, setEditingItem] = useState<Barang | null>(null);
   const [tableFilter, setTableFilter] = useState<string>("")
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
+  const [barang, setBarang] = useState<Barang[]>([]);
 
   const handleDelete = (id: string) => {
     console.log(id)
@@ -34,6 +35,22 @@ export default function AdminInventory() {
       PrintTable(tableComponent, { title: 'Inventaris' });
     } else if (tipe === 'excel') {
       ExportToXlsx(tableComponent, 'Inventaris');
+    }
+  }
+
+  async function getBarang() {
+    try {
+      const res = await fetch("/api/barang", { credentials: "include" });
+      const payload = await res.json()
+
+      if (!res.ok) {
+        alert(payload.error)
+        return
+      }
+
+      setBarang(payload)
+    } catch (error) {
+      alert(error)
     }
   }
 
@@ -62,7 +79,11 @@ export default function AdminInventory() {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <h1>Manajemen Inventaris</h1>
-      <InventoryForm editingItem={editingItem} />
+      <InventoryForm
+        editingItem={editingItem}
+        getBarang={getBarang}
+      />
+
       <h2 className="mt-4">Inventory List</h2>
       <div className="d-flex justify-content-between align-items-center mb-2 pt-2">
         <div className="d-flex gap-2">
@@ -89,6 +110,8 @@ export default function AdminInventory() {
         onDelete={handleDelete}
         readOnly={user?.role === 'user' && true}
         setTableComponent={setTableComponent}
+        getBarang={getBarang}
+        barang={barang}
       />
     </motion.div>
   );

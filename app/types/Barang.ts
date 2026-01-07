@@ -1,5 +1,4 @@
-export interface Barang {
-  id: string,
+export interface BarangForm {
   nama: string,
   jenis: "Goods" | "IT Device",
   qty: number,
@@ -11,5 +10,9 @@ export interface Barang {
   ip: string,
   mac: string,
   created_by: string,
+}
+
+export interface Barang extends BarangForm {
+  id: string,
   created_at: string,
 }

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
-import { Barang } from '../types/Barang';
+import { BarangForm } from '../types/Barang';
+import { useAuth } from './AuthProvider';
 
 const ColForm = ({ children, md = 6, label }: {
   children: React.ReactNode,
@@ -17,25 +18,26 @@ const ColForm = ({ children, md = 6, label }: {
   )
 }
 
-const InventoryForm = ({ editingItem }: { editingItem: Barang | null }) => {
+const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | null, getBarang: () => Promise<void> }) => {
+  const { user } = useAuth();
   const today = new Date().toISOString().split("T")[0];
-  const barangDefaultValue: Barang = {
-    id: "",
-    nama: "",
-    jenis: "Goods",
-    qty: 1,
-    tahun_pengadaan: today,
-    kondisi: "Baru",
-    lokasi: "",
-    status_op: true,
-    ket: "",
-    ip: "",
-    mac: "",
-    created_by: "",
-    created_at: "",
-  }
+  const barangDefaultValue = useMemo<BarangForm>(() => {
+    return {
+      nama: "",
+      jenis: "Goods",
+      qty: 1,
+      tahun_pengadaan: today,
+      kondisi: "Baru",
+      lokasi: "",
+      status_op: true,
+      ket: "",
+      ip: "",
+      mac: "",
+      created_by: user?.username || "",
+    }
+  }, [user])
 
-  const [item, setItem] = useState<Barang>(barangDefaultValue);
+  const [item, setItem] = useState<BarangForm>(barangDefaultValue);
 
   useEffect(() => {
     if (editingItem) {
@@ -52,9 +54,27 @@ const InventoryForm = ({ editingItem }: { editingItem: Barang | null }) => {
     setItem({ ...item, [name]: value });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log(item);
+
+    try {
+      const res = await fetch('/api/barang', {
+        method: "POST",
+        headers: { 'content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      });
+
+      const payload = await res.json();
+      if (!res.ok) {
+        alert(payload.error);
+        return;
+      }
+
+      setItem(barangDefaultValue);
+      getBarang();
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
