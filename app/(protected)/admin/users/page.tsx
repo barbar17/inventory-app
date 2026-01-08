@@ -231,9 +231,9 @@ export default function ManageUsers() {
 
                       {h.column.getCanSort() && (
                         <span>
-                          {h.column.getIsSorted() === 'asc' && '▲'}
-                          {h.column.getIsSorted() === 'desc' && '▼'}
-                          {!h.column.getIsSorted() && '⇅'}
+                          {h.column.getIsSorted() === 'asc' && <i className="bi bi-sort-up fs-5"></i>}
+                          {h.column.getIsSorted() === 'desc' && <i className="bi bi-sort-down fs-5"></i>}
+                          {!h.column.getIsSorted() && <i className="bi bi-arrow-down-up fs-5"></i>}
                         </span>
                       )}
                     </div>

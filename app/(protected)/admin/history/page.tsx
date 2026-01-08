@@ -138,9 +138,9 @@ function LogHistory() {
 
                       {h.column.getCanSort() && (
                         <span>
-                          {h.column.getIsSorted() === 'asc' && '▲'}
-                          {h.column.getIsSorted() === 'desc' && '▼'}
-                          {!h.column.getIsSorted() && '⇅'}
+                          {h.column.getIsSorted() === 'asc' && <i className="bi bi-sort-up fs-5"></i>}
+                          {h.column.getIsSorted() === 'desc' && <i className="bi bi-sort-down fs-5"></i>}
+                          {!h.column.getIsSorted() && <i className="bi bi-arrow-down-up fs-5"></i>}
                         </span>
                       )}
                     </div>
@@ -167,7 +167,7 @@ function LogHistory() {
         <span>
           Page {table.getState().pagination.pageIndex + 1} of{' '}{table.getPageCount()}
         </span>
-        
+
         <div className='d-flex gap-1'>
           <Button variant='outline-dark' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
             <i className="bi bi-chevron-double-left"></i>
