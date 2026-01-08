@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Dispatch } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
-import { BarangForm } from '../types/Barang';
+import { Barang, BarangForm } from '../types/Barang';
 import { useAuth } from './AuthProvider';
 import { toast } from 'react-toastify';
 
@@ -19,8 +19,12 @@ const ColForm = ({ children, md = 6, label }: {
   )
 }
 
-const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | null, getBarang: () => Promise<void> }) => {
-  const { user } = useAuth();
+const InventoryForm = ({ editingItem, getBarang, setEditingItem }: {
+  editingItem: Barang | null,
+  getBarang: () => Promise<void>,
+  setEditingItem: Dispatch<React.SetStateAction<Barang | null>>,
+}) => {
+  const { user, setLoading } = useAuth();
   const today = new Date().toISOString().split("T")[0];
   const barangDefaultValue = useMemo<BarangForm>(() => {
     return {
@@ -37,26 +41,47 @@ const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | n
       created_by: user?.username || "",
     }
   }, [user])
-
   const [item, setItem] = useState<BarangForm>(barangDefaultValue);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  console.log(item.status_op)
 
   useEffect(() => {
     if (editingItem) {
-      setItem(editingItem);
+      const { id, created_at, ...formData } = editingItem
+      setItem(formData);
+      setEditingId(id)
     }
   }, [editingItem]);
 
   useEffect(() => {
-    setItem({ ...item, ip: '', mac: '' })
+    if (!editingItem) {
+      setItem({ ...item, ip: '', mac: '' })
+    } if (editingItem && item.jenis === "Goods") {
+      setItem({ ...item, ip: '', mac: '' })
+    }
   }, [item.jenis])
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setItem({ ...item, [name]: value });
+    if (name === "qty") {
+      setItem({ ...item, [name]: Number(value) });
+    } else if (name === "status_op") {
+      setItem({ ...item, [name]: value === "1" ? true : false });
+    } else {
+      setItem({ ...item, [name]: value });
+    }
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (type: string) => {
+    if (type === "add") {
+      onAdd();
+    } else if (type === "update") {
+      onUpdate();
+    }
+  };
+
+  const onAdd = async () => {
+    setLoading(true)
 
     try {
       const res = await fetch('/api/barang', {
@@ -76,11 +101,47 @@ const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | n
       toast.success("Berhasil menambah barang!");
     } catch (error) {
       toast.error(String(error));
+    } finally {
+      setLoading(false)
     }
-  };
+  }
+
+  const onUpdate = async () => {
+    setLoading(true)
+    if (!editingId) toast.error("ID barang tidak ditemukan");
+
+    try {
+      const res = await fetch(`/api/barang/${editingId}`, {
+        method: "PATCH",
+        headers: { 'content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      });
+
+      const payload = await res.json();
+      if (!res.ok) {
+        toast.error(String(payload.error));
+        return;
+      }
+
+      toast.success("Berhasil update barang!");
+      setItem(barangDefaultValue);
+      setEditingItem(null);
+      setEditingId(null);
+      getBarang();
+    } catch (error) {
+      toast.error(String(error));
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onCancelEdit = () => {
+    setItem(barangDefaultValue);
+    setEditingItem(null);
+  }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form>
       <Row>
         <ColForm md={0} label='Nama Perangkat'>
           <Form.Control
@@ -131,9 +192,9 @@ const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | n
       </Row>
       <Row>
         <ColForm label='Status Operasional'>
-          <Form.Select name="status_op" value={item.kondisi} onChange={handleChange} required>
-            <option value="1">Ya</option>
-            <option value="0">Tidak</option>
+          <Form.Select name="status_op" value={item.status_op === true ? '1' : '0'} onChange={handleChange} required>
+            <option value='1'>Ya</option>
+            <option value='0'>Tidak</option>
           </Form.Select>
         </ColForm>
         <ColForm label='Lokasi'>
@@ -177,9 +238,15 @@ const InventoryForm = ({ editingItem, getBarang }: { editingItem: BarangForm | n
           onChange={handleChange}
         />
       </Form.Group>
-      <Button type="submit" variant="primary">
-        {editingItem ? 'Update' : 'Add'} Item
-      </Button>
+      <div className='d-flex gap-2'>
+        <Button type="button" onClick={() => handleSubmit(editingItem ? "update" : "add")} variant="primary">
+          {editingItem ? 'Update' : 'Tambah'}
+        </Button>
+        {editingItem &&
+          <Button type="button" onClick={onCancelEdit} variant="danger">
+            Batal
+          </Button>}
+      </div>
     </Form>
   );
 };

@@ -5,8 +5,8 @@ import { Table as TableType, ColumnDef, flexRender, getCoreRowModel, getFiltered
 import { Button } from 'react-bootstrap';
 import TableWrapper from './TableWrapper';
 
-const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
-  setEditingItem: Dispatch<SetStateAction<Barang | null>>,
+const InventoryList = ({ handleEditItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
+  handleEditItem: (barang: Barang) => void,
   setGlobalFilter: Dispatch<SetStateAction<string>>,
   onDelete: (id: string, nama: string) => void,
   readOnly?: boolean,
@@ -32,12 +32,7 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
       { accessorKey: 'jenis', header: 'Jenis', size: 100 },
       { accessorKey: 'qty', header: 'Jumlah', size: 100 },
       {
-        accessorKey: 'tahun_pengadaan', header: 'Tgl Pengadaan', cell: ({ getValue }) => {
-          const value = getValue() as string; return value?.slice(0, 10)
-        },
-        meta: {
-          print: (value) => String(value).slice(0, 10),
-        }
+        accessorKey: 'tahun_pengadaan', header: 'Tgl Pengadaan'
       },
       { accessorKey: 'kondisi', header: 'Kondisi' },
       { accessorKey: 'lokasi', header: 'Lokasi' },
@@ -65,7 +60,7 @@ const InventoryList = ({ setEditingItem, onDelete, setGlobalFilter, globalFilter
         {
           id: 'aksi', header: 'Aksi', cell: ({ row }: { row: any }) => (
             <>
-              <Button variant="warning" size="sm" onClick={() => console.log(row.original)} className="me-2">Edit</Button>
+              <Button variant="warning" size="sm" onClick={() => handleEditItem(row.original)} className="me-2">Edit</Button>
               <Button variant="danger" size="sm" onClick={() => onDelete(row.original.id, row.original.nama)}>Delete</Button>
             </>
           )

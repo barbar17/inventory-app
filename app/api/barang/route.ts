@@ -13,7 +13,9 @@ export async function GET() {
 
         const data = rows.map((rows: any, index: number) => ({
             no: index + 1,
-            ...rows
+            ...rows,
+            tahun_pengadaan: rows.tahun_pengadaan.toISOString().slice(0, 10),
+            status_op: rows.status_op === 1 ? true : false,
         }))
 
         return NextResponse.json(data)

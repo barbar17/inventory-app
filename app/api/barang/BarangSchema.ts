@@ -7,7 +7,7 @@ export const BarangSchema = z.object({
     tahun_pengadaan: z.string().min(1, "tahun pengadaan barang tidak boleh kosong"),
     kondisi: z.string().min(1, "kondisi barang tidak boleh kosong"),
     lokasi: z.string().min(1, "lokasi barang tidak boleh kosong"),
-    status_op: z.boolean(),
+    status_op: z.union([z.literal(0), z.literal(1), z.boolean()]).transform(v => (v === true ? 1 : v === false ? 0 : v)),
     ket: z.string().min(1, "keterangan barang tidak boleh kosong"),
     ip: z.string(),
     mac: z.string(),

@@ -5,7 +5,7 @@ import { useAuth } from '@/app/components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import InventoryForm from '@/app/components/InventoryForm';
 import InventoryList from '@/app/components/InventoryList';
-import { Barang } from '@/app/types/Barang';
+import { Barang, BarangForm } from '@/app/types/Barang';
 import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { Table } from '@tanstack/react-table';
@@ -54,7 +54,6 @@ export default function AdminInventory() {
 
     setShowConfirm(false);
   }
-
 
   const handleExport = (tipe: string) => {
     if (!tableComponent) {
@@ -113,6 +112,7 @@ export default function AdminInventory() {
       <InventoryForm
         editingItem={editingItem}
         getBarang={getBarang}
+        setEditingItem={setEditingItem}
       />
 
       <h2 className="mt-4">Inventory List</h2>
@@ -137,7 +137,7 @@ export default function AdminInventory() {
       <InventoryList
         setGlobalFilter={setTableFilter}
         globalFilter={tableFilter}
-        setEditingItem={setEditingItem}
+        handleEditItem={setEditingItem}
         onDelete={onDelete}
         readOnly={user?.role === 'user' && true}
         setTableComponent={setTableComponent}
