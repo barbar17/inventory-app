@@ -8,12 +8,10 @@ type PrintOptions = {
 
 export function PrintTable<T>(table: Table<T>, options: PrintOptions) {
   const { title } = options;
-
-  const headers = table.getVisibleLeafColumns().map(col => `<th>${String(col.columnDef.header)}</th>`);
-
+  const headers = table.getVisibleLeafColumns().filter(col => col.id !== 'aksi').map(col => `<th>${String(col.columnDef.header)}</th>`);
   const rows = table.getPrePaginationRowModel().rows.map(row => `
     <tr>
-      ${row.getVisibleCells().map(cell => `
+      ${row.getVisibleCells().filter(cell => cell.column.id !== 'aksi').map(cell => `
         <td>${cell.column.columnDef.meta?.print?.(cell.getValue()) ?? String(cell.getValue())}</td>
       `)}
     </tr>`);

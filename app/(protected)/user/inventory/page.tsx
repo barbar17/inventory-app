@@ -14,13 +14,24 @@ import { ExportToXlsx } from '@/app/components/ExportToXlsx';
 export default function UserInventory() {
   const { user, isChecking, setLoading } = useAuth();
   const router = useRouter();
-  const [items, setItems] = useState([]);
-  const [editingItem, setEditingItem] = useState<Barang | null>(null);
   const [tableFilter, setTableFilter] = useState<string>("")
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
+  const [barang, setBarang] = useState<Barang[]>([]);
 
-  const handleDelete = (id: string) => {
-    console.log(id)
+  async function getBarang() {
+    try {
+      const res = await fetch("/api/barang", { credentials: "include" });
+      const payload = await res.json()
+
+      if (!res.ok) {
+        alert(payload.error)
+        return
+      }
+
+      setBarang(payload)
+    } catch (error) {
+      alert(error)
+    }
   }
 
   const handleExport = (tipe: string) => {
@@ -35,19 +46,6 @@ export default function UserInventory() {
       ExportToXlsx(tableComponent, 'Inventaris');
     }
   }
-
-  useEffect(() => {
-    const storedItems = localStorage.getItem('inventory');
-    if (storedItems) {
-      setItems(JSON.parse(storedItems));
-    }
-  }, [user, router]);
-
-  useEffect(() => {
-    if (user && user.role === 'admin') {
-      localStorage.setItem('inventory', JSON.stringify(items));
-    }
-  }, [items, user]);
 
   useEffect(() => {
     setLoading(false)
@@ -83,10 +81,10 @@ export default function UserInventory() {
         <InventoryList
           setGlobalFilter={setTableFilter}
           globalFilter={tableFilter}
-          setEditingItem={setEditingItem}
-          onDelete={handleDelete}
           readOnly={user?.role === 'user' && true}
           setTableComponent={setTableComponent}
+          barang={barang}
+          getBarang={getBarang}
         />
       </div>
     </motion.div>

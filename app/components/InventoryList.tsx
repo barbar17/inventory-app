@@ -6,9 +6,9 @@ import { Button } from 'react-bootstrap';
 import TableWrapper from './TableWrapper';
 
 const InventoryList = ({ handleEditItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
-  handleEditItem: (barang: Barang) => void,
+  handleEditItem?: (barang: Barang) => void,
   setGlobalFilter: Dispatch<SetStateAction<string>>,
-  onDelete: (id: string, nama: string) => void,
+  onDelete?: (id: string, nama: string) => void,
   readOnly?: boolean,
   globalFilter: string,
   setTableComponent: Dispatch<SetStateAction<TableType<Barang> | null>>,
@@ -60,8 +60,8 @@ const InventoryList = ({ handleEditItem, onDelete, setGlobalFilter, globalFilter
         {
           id: 'aksi', header: 'Aksi', cell: ({ row }: { row: any }) => (
             <>
-              <Button variant="warning" size="sm" onClick={() => handleEditItem(row.original)} className="me-2">Edit</Button>
-              <Button variant="danger" size="sm" onClick={() => onDelete(row.original.id, row.original.nama)}>Delete</Button>
+              <Button variant="warning" size="sm" onClick={() => handleEditItem!(row.original)} className="me-2">Edit</Button>
+              <Button variant="danger" size="sm" onClick={() => onDelete!(row.original.id, row.original.nama)}>Delete</Button>
             </>
           )
         },
