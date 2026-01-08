@@ -3,8 +3,8 @@ import { useAuth } from '@/app/components/AuthProvider'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { History } from '@/app/types/History'
-import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
-import { Table } from 'react-bootstrap'
+import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import { Button, Table } from 'react-bootstrap'
 import { Form } from 'react-bootstrap'
 import TableWrapper from '@/app/components/TableWrapper'
 import { toast } from 'react-toastify'
@@ -41,6 +41,10 @@ function LogHistory() {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [history, setHistory] = useState<History[]>([])
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   useEffect(() => {
     const getHistory = async () => {
@@ -70,12 +74,15 @@ function LogHistory() {
     state: {
       sorting,
       globalFilter,
+      pagination,
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     enableSortingRemoval: false,
   })
 
@@ -87,7 +94,23 @@ function LogHistory() {
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
       <h1>History Login</h1>
-      <div className="d-flex justify-content-end align-items-center mb-2">
+      <div className="d-flex gap-2 justify-content-between align-items-center mb-2 mt-4">
+        <div className='d-flex gap-2 text-center justify-content-end align-items-center'>
+          <span>Show</span>
+          <Form.Select
+            value={table.getState().pagination.pageSize}
+            onChange={e => table.setPageSize(Number(e.target.value))}
+            style={{ width: "100px" }}
+          >
+            {[10, 20, 30, 50].map(size => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </Form.Select>
+          <span>Entries</span>
+        </div>
+
         <Form.Control
           style={{ maxWidth: '300px' }}
           type="text"
@@ -140,6 +163,26 @@ function LogHistory() {
           </tbody>
         </Table>
       </TableWrapper>
+      <div style={{ marginTop: 8 }} className='d-flex align-items-center justify-content-end gap-2'>
+        <span>
+          Page {table.getState().pagination.pageIndex + 1} of{' '}{table.getPageCount()}
+        </span>
+        
+        <div className='d-flex gap-1'>
+          <Button variant='outline-dark' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+            <i className="bi bi-chevron-double-left"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+            <i className="bi bi-chevron-left"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            <i className="bi bi-chevron-right"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+            <i className="bi bi-chevron-double-right"></i>
+          </Button>
+        </div>
+      </div>
     </motion.div>
   )
 }
