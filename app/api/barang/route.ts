@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         await conn.rollback()
 
         if (error instanceof z.ZodError) {
-            return NextResponse.json({"error": error.issues[0]}, { status: 400 })
+            return NextResponse.json({"error": `${error.issues[0].path}: ${error.issues[0].message}`}, { status: 400 })
         }
         return NextResponse.json({"error": error}, { status: 400 })
     } finally {

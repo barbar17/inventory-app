@@ -86,7 +86,7 @@ const InventoryForm = ({ editingItem, getBarang, setEditingItem }: {
     try {
       const res = await fetch('/api/barang', {
         method: "POST",
-        headers: { 'content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
       });
 
@@ -113,7 +113,7 @@ const InventoryForm = ({ editingItem, getBarang, setEditingItem }: {
     try {
       const res = await fetch(`/api/barang/${editingId}`, {
         method: "PATCH",
-        headers: { 'content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
       });
 
@@ -199,11 +199,11 @@ const InventoryForm = ({ editingItem, getBarang, setEditingItem }: {
         </ColForm>
         <ColForm label='Lokasi'>
           <Form.Control
-            required
             type="text"
             name="lokasi"
             value={item.lokasi}
             onChange={handleChange}
+            required
           />
         </ColForm>
       </Row>

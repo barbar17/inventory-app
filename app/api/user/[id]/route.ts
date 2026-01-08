@@ -41,22 +41,22 @@ export async function PATCH(
   }
 }
 
-export async function DELETE({params}: {params: Promise<{id: string}>}) {
-    const {id} = await params;
-    if (!id) {
-      throw new Error(`id user tidak boleh kosong`);
-    }
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!id) {
+    throw new Error(`id user tidak boleh kosong`);
+  }
 
-    const conn = await DB.getConnection()
-    await conn.beginTransaction();
-    try {
-      const [res] = await conn.execute(`DELETE FROM user WHERE id = ?`, [id]);
-      await conn.commit();
-      return NextResponse.json("success");
-    } catch (error) {
-      await conn.rollback();
-      return NextResponse.json({ "error": error }, { status: 500 });
-    } finally {
-      conn.release();
-    }
+  const conn = await DB.getConnection();
+  await conn.beginTransaction();
+  try {
+    const [res] = await conn.execute(`DELETE FROM user WHERE id = ?`, [id]);
+    await conn.commit();
+    return NextResponse.json("success");
+  } catch (error) {
+    await conn.rollback();
+    return NextResponse.json({ error: error }, { status: 500 });
+  } finally {
+    conn.release();
+  }
 }

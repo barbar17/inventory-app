@@ -47,12 +47,11 @@ export default function AdminInventory() {
       getBarang();
     } catch (error) {
       toast.error(String(error));
-    } finally {
       setLoading(false);
+    } finally {
       setDeleteBarang(null);
+      setShowConfirm(false);
     }
-
-    setShowConfirm(false);
   }
 
   const handleExport = (tipe: string) => {
