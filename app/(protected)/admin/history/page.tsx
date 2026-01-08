@@ -7,6 +7,7 @@ import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedR
 import { Table } from 'react-bootstrap'
 import { Form } from 'react-bootstrap'
 import TableWrapper from '@/app/components/TableWrapper'
+import { toast } from 'react-toastify'
 
 const columns: ColumnDef<History>[] = [
   {
@@ -36,7 +37,7 @@ const columns: ColumnDef<History>[] = [
 ]
 
 function LogHistory() {
-  const { setLoading, isChecking } = useAuth()
+  const { setLoading } = useAuth()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [history, setHistory] = useState<History[]>([])
@@ -48,22 +49,20 @@ function LogHistory() {
         const payload = await res.json()
 
         if (!res.ok) {
-          alert(payload.error)
+          toast.error(payload.error)
           return
         }
 
         setHistory(payload)
-      } catch (error) {
-        alert(error)
+      } catch (error: any) {
+        toast.error(error)
+      } finally {
+        setLoading(false)
       }
     }
 
     getHistory()
   }, [])
-
-  useEffect(() => {
-    setLoading(false)
-  }, [isChecking])
 
   const table = useReactTable<History>({
     data: history,

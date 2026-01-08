@@ -15,7 +15,7 @@ import ConfirmModal from '@/app/components/ConfirmModal';
 import { toast } from 'react-toastify';
 
 export default function AdminInventory() {
-  const { user, isChecking, setLoading } = useAuth();
+  const { user, setLoading } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [editingItem, setEditingItem] = useState<Barang | null>(null);
@@ -57,7 +57,7 @@ export default function AdminInventory() {
 
   const handleExport = (tipe: string) => {
     if (!tableComponent) {
-      alert("table tidak ditemukan");
+      toast.error("table tidak ditemukan");
       return;
     }
 
@@ -74,13 +74,15 @@ export default function AdminInventory() {
       const payload = await res.json()
 
       if (!res.ok) {
-        alert(payload.error)
+        toast.error(payload.error)
         return
       }
 
       setBarang(payload)
-    } catch (error) {
-      alert(error)
+    } catch (error: any) {
+      toast.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -96,10 +98,6 @@ export default function AdminInventory() {
       localStorage.setItem('inventory', JSON.stringify(items));
     }
   }, [items, user]);
-
-  useEffect(() => {
-    setLoading(false)
-  }, [isChecking])
 
   return (
     <motion.div

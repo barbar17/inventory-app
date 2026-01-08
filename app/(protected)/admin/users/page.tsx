@@ -7,6 +7,7 @@ import { useAuth } from '@/app/components/AuthProvider';
 import { motion } from 'motion/react'
 import { User } from '@/app/types/User';
 import TableWrapper from '@/app/components/TableWrapper';
+import { toast } from 'react-toastify';
 
 const userDefault: User = {
   username: "",
@@ -15,7 +16,7 @@ const userDefault: User = {
 }
 
 export default function ManageUsers() {
-  const { setLoading, isChecking } = useAuth()
+  const { setLoading } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -30,22 +31,20 @@ export default function ManageUsers() {
         const payload = await res.json()
 
         if (!res.ok) {
-          alert(payload.error)
+          toast.error(payload.error)
           return
         }
 
         setUsers(payload)
-      } catch (error) {
-        alert(error)
+      } catch (error: any) {
+        toast.error(error)
+      } finally {
+        setLoading(false);
       }
     }
 
     getUser()
   }, [])
-
-  useEffect(() => {
-    setLoading(false)
-  }, [isChecking])
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

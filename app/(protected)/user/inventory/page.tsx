@@ -10,10 +10,10 @@ import { Form, Button } from 'react-bootstrap';
 import { PrintTable } from '@/app/components/PrintTable';
 import { Table } from '@tanstack/react-table';
 import { ExportToXlsx } from '@/app/components/ExportToXlsx';
+import { toast } from 'react-toastify';
 
 export default function UserInventory() {
-  const { user, isChecking, setLoading } = useAuth();
-  const router = useRouter();
+  const { user, setLoading } = useAuth();
   const [tableFilter, setTableFilter] = useState<string>("")
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
   const [barang, setBarang] = useState<Barang[]>([]);
@@ -24,19 +24,21 @@ export default function UserInventory() {
       const payload = await res.json()
 
       if (!res.ok) {
-        alert(payload.error)
+        toast.error(payload.error)
         return
       }
 
       setBarang(payload)
-    } catch (error) {
-      alert(error)
+    } catch (error: any) {
+      toast.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleExport = (tipe: string) => {
     if (!tableComponent) {
-      alert("table tidak ditemukan");
+      toast.error("table tidak ditemukan");
       return;
     }
 
@@ -46,10 +48,6 @@ export default function UserInventory() {
       ExportToXlsx(tableComponent, 'Inventaris');
     }
   }
-
-  useEffect(() => {
-    setLoading(false)
-  }, [isChecking])
 
   return (
     <motion.div
