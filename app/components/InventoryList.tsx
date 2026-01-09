@@ -1,25 +1,23 @@
+'user client';
 import { Dispatch, SetStateAction, useState, useMemo, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
 import { Barang } from '../types/Barang';
-import { Table as TableType, ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable, getPaginationRowModel } from '@tanstack/react-table';
+import { Table, ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable, getPaginationRowModel } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
-import TableWrapper from './TableWrapper';
+import DefaultTable from './DefaultTable';
+import { PrintTable } from '@/app/components/PrintTable';
+import { ExportToXlsx } from '@/app/components/ExportToXlsx';
+import { toast } from 'react-toastify';
 
-const InventoryList = ({ handleEditItem, onDelete, setGlobalFilter, globalFilter, readOnly = false, setTableComponent, getBarang, barang }: {
+const defaultSort: SortingState = [{ id: 'nama', desc: false },]
+
+const InventoryList = ({ handleEditItem, onDelete, readOnly = false, getBarang, barang }: {
   handleEditItem?: (barang: Barang) => void,
-  setGlobalFilter: Dispatch<SetStateAction<string>>,
   onDelete?: (id: string, nama: string) => void,
   readOnly?: boolean,
-  globalFilter: string,
-  setTableComponent: Dispatch<SetStateAction<TableType<Barang> | null>>,
   getBarang: () => Promise<void>,
   barang: Barang[],
 }) => {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'nama', desc: false },]);
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
 
   useEffect(() => {
     getBarang()
@@ -67,96 +65,38 @@ const InventoryList = ({ handleEditItem, onDelete, setGlobalFilter, globalFilter
     ]
   }, [readOnly, barang]);
 
-  const table = useReactTable<Barang>({
-    data: barang,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-      pagination
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    enableSortingRemoval: false,
-  })
+  const handleExport = (tipe: string) => {
+    if (!tableComponent) {
+      toast.error("table tidak ditemukan");
+      return;
+    }
 
-  useEffect(() => {
-    setTableComponent(table);
-  }, [table])
+    if (tipe === 'pdf') {
+      PrintTable(tableComponent, { title: 'Inventaris' });
+    } else if (tipe === 'excel') {
+      ExportToXlsx(tableComponent, 'Inventaris');
+    }
+  }
+
 
   return (
     <>
-      <TableWrapper>
-        <Table
-          striped
-          bordered
-          hover
-          className="table table-bordered mb-0"
-          style={{
-            tableLayout: 'fixed',
-            minWidth: readOnly === true ? '150%' : '100%',
-          }}
-        >
-          <thead>
-            {table.getHeaderGroups().map(hg => (
-              <tr key={hg.id}>
-                {hg.headers.map(h => (
-                  <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default', width: h.getSize() }}>
-                    <div className="d-flex align-items-center justify-content-between" style={{ userSelect: "none" }}>
-                      {flexRender(h.column.columnDef.header, h.getContext())}
-
-                      {h.column.getCanSort() && (
-                        <span>
-                          {h.column.getIsSorted() === 'asc' && <i className="bi bi-sort-up fs-5"></i>}
-                          {h.column.getIsSorted() === 'desc' && <i className="bi bi-sort-down fs-5"></i>}
-                          {!h.column.getIsSorted() && <i className="bi bi-arrow-down-up fs-5"></i>}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-
-          <tbody>
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </TableWrapper>
-      <div style={{ marginTop: 8 }} className='d-flex align-items-center justify-content-end gap-2'>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of{' '}{table.getPageCount()}
-        </span>
-
-        <div className='d-flex gap-1'>
-          <Button variant='outline-dark' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-            <i className="bi bi-chevron-double-left"></i>
+      <div className="d-flex justify-content-between align-items-center mb-2 pt-2">
+        <div className="d-flex gap-2">
+          <Button type="button" variant="danger" onClick={() => handleExport('pdf')}>
+            <i className="bi bi-file-earmark-pdf-fill"></i><span style={{ marginLeft: "4px" }}>Export PDF</span>
           </Button>
-          <Button variant='outline-dark' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            <i className="bi bi-chevron-left"></i>
-          </Button>
-          <Button variant='outline-dark' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            <i className="bi bi-chevron-right"></i>
-          </Button>
-          <Button variant='outline-dark' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-            <i className="bi bi-chevron-double-right"></i>
+          <Button type="button" variant="success" onClick={() => handleExport('excel')}>
+            <i className="bi bi-file-earmark-excel-fill"></i><span style={{ marginLeft: "4px" }}>Export Excel</span>
           </Button>
         </div>
       </div>
+      <DefaultTable<Barang>
+        data={barang}
+        columns={columns}
+        defaultSort={defaultSort}
+        setTableComponent={setTableComponent}
+      />
     </>
   );
 };

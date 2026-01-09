@@ -1,12 +1,12 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
-import { Table, Button, Modal } from 'react-bootstrap'
-import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { Button, Modal } from 'react-bootstrap'
+import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { useAuth } from '@/app/components/AuthProvider';
 import { motion } from 'motion/react'
 import { User } from '@/app/types/User';
-import TableWrapper from '@/app/components/TableWrapper';
+import DefaultTable from '@/app/components/DefaultTable';
 import { toast } from 'react-toastify';
 import ConfirmModal from '@/app/components/ConfirmModal';
 
@@ -16,22 +16,18 @@ const userDefault: User = {
   role: "user",
 }
 
+const defaultSort: SortingState = [{ id: 'username', desc: false }]
+
 export default function ManageUsers() {
   const { setLoading } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'username', desc: false },]);
-  const [globalFilter, setGlobalFilter] = useState("");
   const [users, setUsers] = useState<User[]>([])
   const [user, setUser] = useState<User>(userDefault);
   const [deleteUser, setDeleteUser] = useState<{ id: string, nama: string } | null>(null);
   const [editingUser, setEditingUser] = useState<boolean>(false);
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
-  async function getUser() {
+  const getUser = async() => {
     setLoading(true)
     try {
       const res = await fetch("/api/user", { credentials: "include" });
@@ -178,24 +174,6 @@ export default function ManageUsers() {
     ]
   }, [])
 
-  const table = useReactTable<User>({
-    data: users,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-      pagination
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    enableSortingRemoval: false,
-  })
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -203,8 +181,8 @@ export default function ManageUsers() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
+      <div className="d-flex justify-content-between align-items-between">
       <h1>Manajemen Users</h1>
-      <div className="d-flex justify-content-between align-items-center">
         <Button variant="primary" onClick={() => {
           if (editingUser) {
             setUser(userDefault);
@@ -212,78 +190,12 @@ export default function ManageUsers() {
           setEditingUser(false)
           setShowModal(true)
         }} className="mb-3">Tambah User</Button>
-        <Form.Control
-          style={{ maxWidth: '300px' }}
-          type="text"
-          name="nama"
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder='Cari...'
-        />
       </div>
-      <TableWrapper>
-        <Table
-          striped
-          bordered
-          hover
-          responsive
-          className="table table-bordered mb-0"
-        >
-          <thead>
-            {table.getHeaderGroups().map(hg => (
-              <tr key={hg.id}>
-                {hg.headers.map(h => (
-                  <th key={h.id} onClick={h.column.getToggleSortingHandler()} style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default' }}>
-                    <div className="d-flex align-items-center justify-content-between">
-                      {flexRender(h.column.columnDef.header, h.getContext())}
-
-                      {h.column.getCanSort() && (
-                        <span>
-                          {h.column.getIsSorted() === 'asc' && <i className="bi bi-sort-up fs-5"></i>}
-                          {h.column.getIsSorted() === 'desc' && <i className="bi bi-sort-down fs-5"></i>}
-                          {!h.column.getIsSorted() && <i className="bi bi-arrow-down-up fs-5"></i>}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-
-          <tbody>
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </TableWrapper>
-      <div style={{ marginTop: 8 }} className='d-flex align-items-center justify-content-end gap-2'>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of{' '}{table.getPageCount()}
-        </span>
-
-        <div className='d-flex gap-1'>
-          <Button variant='outline-dark' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-            <i className="bi bi-chevron-double-left"></i>
-          </Button>
-          <Button variant='outline-dark' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            <i className="bi bi-chevron-left"></i>
-          </Button>
-          <Button variant='outline-dark' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            <i className="bi bi-chevron-right"></i>
-          </Button>
-          <Button variant='outline-dark' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-            <i className="bi bi-chevron-double-right"></i>
-          </Button>
-        </div>
-      </div>
+      <DefaultTable<User>
+        data={users}
+        columns={columns}
+        defaultSort={defaultSort}
+      />
 
       <Modal show={showModal} onHide={() => { setShowModal(false) }}>
         <Modal.Header closeButton>

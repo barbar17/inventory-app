@@ -1,26 +1,16 @@
 'use client';
-
 import { useState } from 'react';
 import { useAuth } from '@/app/components/AuthProvider';
-import { useRouter } from 'next/navigation';
 import InventoryForm from '@/app/components/InventoryForm';
 import InventoryList from '@/app/components/InventoryList';
 import { Barang } from '@/app/types/Barang';
 import { motion } from "motion/react";
-import { Form, Button } from 'react-bootstrap';
-import { Table } from '@tanstack/react-table';
-import { PrintTable } from '@/app/components/PrintTable';
-import { ExportToXlsx } from '@/app/components/ExportToXlsx';
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { toast } from 'react-toastify';
 
 export default function AdminInventory() {
   const { user, setLoading } = useAuth();
-  const router = useRouter();
-  const [items, setItems] = useState([]);
   const [editingItem, setEditingItem] = useState<Barang | null>(null);
-  const [tableFilter, setTableFilter] = useState<string>("")
-  const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
   const [barang, setBarang] = useState<Barang[]>([]);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [deleteBarang, setDeleteBarang] = useState<{ id: string, nama: string } | null>(null);
@@ -51,19 +41,6 @@ export default function AdminInventory() {
     } finally {
       setDeleteBarang(null);
       setShowConfirm(false);
-    }
-  }
-
-  const handleExport = (tipe: string) => {
-    if (!tableComponent) {
-      toast.error("table tidak ditemukan");
-      return;
-    }
-
-    if (tipe === 'pdf') {
-      PrintTable(tableComponent, { title: 'Inventaris' });
-    } else if (tipe === 'excel') {
-      ExportToXlsx(tableComponent, 'Inventaris');
     }
   }
 
@@ -101,31 +78,10 @@ export default function AdminInventory() {
       />
 
       <h2 className="mt-4">Inventory List</h2>
-      <div className="d-flex justify-content-between align-items-center mb-2 pt-2">
-        <div className="d-flex gap-2">
-          <Button type="button" variant="danger" onClick={() => handleExport('pdf')}>
-            <i className="bi bi-file-earmark-pdf-fill"></i><span style={{ marginLeft: "4px" }}>Export PDF</span>
-          </Button>
-          <Button type="button" variant="success" onClick={() => handleExport('excel')}>
-            <i className="bi bi-file-earmark-excel-fill"></i><span style={{ marginLeft: "4px" }}>Export Excel</span>
-          </Button>
-        </div>
-        <Form.Control
-          style={{ maxWidth: '300px' }}
-          type="text"
-          name="nama"
-          value={tableFilter}
-          onChange={(e) => setTableFilter(e.target.value)}
-          placeholder='Cari...'
-        />
-      </div>
       <InventoryList
-        setGlobalFilter={setTableFilter}
-        globalFilter={tableFilter}
         handleEditItem={setEditingItem}
         onDelete={onDelete}
         readOnly={user?.role === 'user' && true}
-        setTableComponent={setTableComponent}
         getBarang={getBarang}
         barang={barang}
       />

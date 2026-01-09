@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       router.replace('/login');
     }
-  }, [pathname, user, isCheckAuth]);
+  }, [pathname]);
 
   useEffect(() => {
     if (pathname !== '/login') {
@@ -107,9 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
-  const ctxValue = useMemo(() => ({ user, setUser, logout, loading, setLoading }), [user, loading])
-
-  console.log('render')
+  const ctxValue = useMemo(() => ({ user, setUser, logout, loading, setLoading }), [user, loading]);
 
   return (
     <>
