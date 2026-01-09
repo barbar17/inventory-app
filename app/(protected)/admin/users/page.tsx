@@ -26,9 +26,10 @@ export default function ManageUsers() {
   const [user, setUser] = useState<User>(userDefault);
   const [deleteUser, setDeleteUser] = useState<{ id: string, nama: string } | null>(null);
   const [editingUser, setEditingUser] = useState<boolean>(false);
+  const [tableLoading, setTableLoading] = useState<boolean>(true);
 
-  const getUser = async() => {
-    setLoading(true)
+  const getUser = async () => {
+    setTableLoading(true);
     try {
       const res = await fetch("/api/user", { credentials: "include" });
       const payload = await res.json()
@@ -42,7 +43,7 @@ export default function ManageUsers() {
     } catch (error: any) {
       toast.error(String(error))
     } finally {
-      setLoading(false);
+      setTableLoading(false);
     }
   }
 
@@ -80,6 +81,7 @@ export default function ManageUsers() {
       setUser(userDefault);
     } catch (error: any) {
       toast.error(error);
+    } finally {
       setLoading(false)
     }
   }
@@ -108,8 +110,8 @@ export default function ManageUsers() {
       getUser();
     } catch (error: any) {
       toast.error(String(error))
-      setLoading(false);
     } finally {
+      setLoading(false);
       setShowConfirm(false);
       setDeleteUser(null);
     }
@@ -138,7 +140,8 @@ export default function ManageUsers() {
       setUser(userDefault);
     } catch (error: any) {
       toast.error(error);
-      setLoading(false);
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -182,7 +185,7 @@ export default function ManageUsers() {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <div className="d-flex justify-content-between align-items-between">
-      <h1>Manajemen Users</h1>
+        <h1>Manajemen Users</h1>
         <Button variant="primary" onClick={() => {
           if (editingUser) {
             setUser(userDefault);
@@ -192,6 +195,7 @@ export default function ManageUsers() {
         }} className="mb-3">Tambah User</Button>
       </div>
       <DefaultTable<User>
+        loading={tableLoading}
         data={users}
         columns={columns}
         defaultSort={defaultSort}

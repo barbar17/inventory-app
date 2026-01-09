@@ -10,12 +10,13 @@ import { toast } from 'react-toastify';
 
 const defaultSort: SortingState = [{ id: 'nama', desc: false },]
 
-const InventoryList = ({ handleEditItem, onDelete, readOnly = false, getBarang, barang }: {
+const InventoryList = ({ handleEditItem, onDelete, readOnly = false, getBarang, barang, tableLoading }: {
   handleEditItem?: (barang: Barang) => void,
   onDelete?: (id: string, nama: string) => void,
   readOnly?: boolean,
   getBarang: () => Promise<void>,
   barang: Barang[],
+  tableLoading: boolean,
 }) => {
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
 
@@ -92,6 +93,8 @@ const InventoryList = ({ handleEditItem, onDelete, readOnly = false, getBarang, 
         </div>
       </div>
       <DefaultTable<Barang>
+        loading={tableLoading}
+        tableWidth="120%"
         data={barang}
         columns={columns}
         defaultSort={defaultSort}

@@ -4,11 +4,19 @@ import TableWrapper from './TableWrapper'
 import { Table } from 'react-bootstrap';
 import { Table as TableType, ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { Button, Form } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
-function DefaultTable<T>({ data, columns, defaultSort, setTableComponent }: { data: T[], columns: ColumnDef<T, any>[], defaultSort: SortingState, setTableComponent?: Dispatch<SetStateAction<TableType<T> | null>>, }) {
+function DefaultTable<T>({ data, columns, defaultSort, tableWidth = "100%", loading, setTableComponent }: {
+  data: T[],
+  columns: ColumnDef<T, any>[],
+  defaultSort: SortingState,
+  tableWidth?: string,
+  loading: boolean,
+  setTableComponent?: Dispatch<SetStateAction<TableType<T> | null>>,
+}) {
   const [sorting, setSorting] = useState<SortingState>(defaultSort);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
   const table = useReactTable<T>({
     data,
@@ -27,7 +35,7 @@ function DefaultTable<T>({ data, columns, defaultSort, setTableComponent }: { da
     getPaginationRowModel: getPaginationRowModel(),
     enableSortingRemoval: false,
   })
-  
+
   useEffect(() => {
     if (setTableComponent) setTableComponent(table);
   }, [table])
@@ -60,7 +68,7 @@ function DefaultTable<T>({ data, columns, defaultSort, setTableComponent }: { da
           placeholder='Cari...'
         />
       </div>
-      <TableWrapper>
+      <TableWrapper width={tableWidth}>
         <Table
           striped
           bordered
@@ -91,7 +99,16 @@ function DefaultTable<T>({ data, columns, defaultSort, setTableComponent }: { da
           </thead>
 
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {loading ? (
+              <tr>
+                <td colSpan={table.getAllColumns().length} className="text-center py-4">
+                  <div className='d-flex flex-column gap-2 align-items-center justify-content-center'>
+                    <Spinner animation="border" />
+                    <span className="ms-2">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            ) : table.getRowModel().rows.map(row => (
               <tr key={row.id}>
                 {row.getVisibleCells().map(cell => (
                   <td key={cell.id}>

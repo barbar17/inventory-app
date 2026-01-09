@@ -1,10 +1,10 @@
 'use client';
-
-import React, { createContext, useContext, useState, useEffect, Dispatch, SetStateAction, useMemo, useEffectEvent, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, Dispatch, SetStateAction, useMemo, useEffectEvent, useCallback, use } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { UserCtx } from '../types/User';
 import { Container, Spinner } from 'react-bootstrap';
 import Header from './Header';
+import { toast } from 'react-toastify';
 
 type AuthContextValue = {
   user: UserCtx | null,
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
           const payload = await res.json()
           if (!res.ok) {
-            alert(payload.error)
+            toast.error(payload.error)
             logout();
             return;
           }
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <>
       {loading && <Loader />}
       <AuthContext.Provider value={ctxValue}>
-        <Header />
+        <Header/>
         <Container className="mt-4">
           {children}
         </Container>

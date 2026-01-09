@@ -40,12 +40,12 @@ const columns: ColumnDef<History>[] = [
 const defaultSort: SortingState = [{ id: 'created_at', desc: false }]
 
 function LogHistory() {
-  const { setLoading } = useAuth()
   const [history, setHistory] = useState<History[]>([])
+  const [tableLoading, setTableLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getHistory = async () => {
-      setLoading(true)
+      setTableLoading(true);
       try {
         const res = await fetch(`/api/history`, { credentials: 'include' })
         const payload = await res.json()
@@ -59,7 +59,7 @@ function LogHistory() {
       } catch (error: any) {
         toast.error(error)
       } finally {
-        setLoading(false)
+        setTableLoading(false);
       }
     }
 
@@ -76,6 +76,7 @@ function LogHistory() {
       <h1>History Login</h1>
       
       <DefaultTable<History>
+        loading={tableLoading}
         data={history}
         columns={columns}
         defaultSort={defaultSort}

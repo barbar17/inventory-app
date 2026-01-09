@@ -14,6 +14,7 @@ export default function AdminInventory() {
   const [barang, setBarang] = useState<Barang[]>([]);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [deleteBarang, setDeleteBarang] = useState<{ id: string, nama: string } | null>(null);
+  const [tableLoading, setTableLoading] = useState<boolean>(true);
 
   const onDelete = (id: string, nama: string) => {
     setDeleteBarang({ id, nama })
@@ -41,11 +42,12 @@ export default function AdminInventory() {
     } finally {
       setDeleteBarang(null);
       setShowConfirm(false);
+      setLoading(false);
     }
   }
 
   const getBarang = async() => {
-    setLoading(true)
+    setTableLoading(true);
     try {
       const res = await fetch("/api/barang", { credentials: "include" });
       const payload = await res.json()
@@ -59,7 +61,7 @@ export default function AdminInventory() {
     } catch (error: any) {
       toast.error(String(error))
     } finally {
-      setLoading(false)
+      setTableLoading(false)
     }
   }
 
@@ -79,6 +81,7 @@ export default function AdminInventory() {
 
       <h2 className="mt-4">Inventory List</h2>
       <InventoryList
+      tableLoading={tableLoading}
         handleEditItem={setEditingItem}
         onDelete={onDelete}
         readOnly={user?.role === 'user' && true}
