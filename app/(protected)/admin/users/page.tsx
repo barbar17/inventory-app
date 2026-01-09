@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
 import { Table, Button, Modal } from 'react-bootstrap'
-import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useAuth } from '@/app/components/AuthProvider';
 import { motion } from 'motion/react'
 import { User } from '@/app/types/User';
@@ -26,8 +26,13 @@ export default function ManageUsers() {
   const [user, setUser] = useState<User>(userDefault);
   const [deleteUser, setDeleteUser] = useState<{ id: string, nama: string } | null>(null);
   const [editingUser, setEditingUser] = useState<boolean>(false);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   async function getUser() {
+    setLoading(true)
     try {
       const res = await fetch("/api/user", { credentials: "include" });
       const payload = await res.json()
@@ -36,7 +41,7 @@ export default function ManageUsers() {
         toast.error(payload.error)
         return
       }
-      
+
       setUsers(payload)
     } catch (error: any) {
       toast.error(String(error))
@@ -179,12 +184,15 @@ export default function ManageUsers() {
     state: {
       sorting,
       globalFilter,
+      pagination
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     enableSortingRemoval: false,
   })
 
@@ -256,6 +264,26 @@ export default function ManageUsers() {
           </tbody>
         </Table>
       </TableWrapper>
+      <div style={{ marginTop: 8 }} className='d-flex align-items-center justify-content-end gap-2'>
+        <span>
+          Page {table.getState().pagination.pageIndex + 1} of{' '}{table.getPageCount()}
+        </span>
+
+        <div className='d-flex gap-1'>
+          <Button variant='outline-dark' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+            <i className="bi bi-chevron-double-left"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+            <i className="bi bi-chevron-left"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            <i className="bi bi-chevron-right"></i>
+          </Button>
+          <Button variant='outline-dark' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+            <i className="bi bi-chevron-double-right"></i>
+          </Button>
+        </div>
+      </div>
 
       <Modal show={showModal} onHide={() => { setShowModal(false) }}>
         <Modal.Header closeButton>

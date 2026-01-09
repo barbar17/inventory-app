@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/app/components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import InventoryForm from '@/app/components/InventoryForm';
 import InventoryList from '@/app/components/InventoryList';
-import { Barang, BarangForm } from '@/app/types/Barang';
+import { Barang } from '@/app/types/Barang';
 import { motion } from "motion/react";
 import { Form, Button } from 'react-bootstrap';
 import { Table } from '@tanstack/react-table';
@@ -67,7 +67,8 @@ export default function AdminInventory() {
     }
   }
 
-  async function getBarang() {
+  const getBarang = async() => {
+    setLoading(true)
     try {
       const res = await fetch("/api/barang", { credentials: "include" });
       const payload = await res.json()
@@ -79,24 +80,11 @@ export default function AdminInventory() {
 
       setBarang(payload)
     } catch (error: any) {
-      toast.error(error)
+      toast.error(String(error))
     } finally {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    const storedItems = localStorage.getItem('inventory');
-    if (storedItems) {
-      setItems(JSON.parse(storedItems));
-    }
-  }, [user, router]);
-
-  useEffect(() => {
-    if (user && user.role === 'admin') {
-      localStorage.setItem('inventory', JSON.stringify(items));
-    }
-  }, [items, user]);
 
   return (
     <motion.div

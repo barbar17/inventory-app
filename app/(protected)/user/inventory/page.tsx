@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/app/components/AuthProvider';
-import { useRouter } from 'next/navigation';
 import InventoryList from '@/app/components/InventoryList';
 import { Barang } from '@/app/types/Barang';
 import { motion } from "motion/react";
@@ -18,7 +17,8 @@ export default function UserInventory() {
   const [tableComponent, setTableComponent] = useState<Table<Barang> | null>(null);
   const [barang, setBarang] = useState<Barang[]>([]);
 
-  async function getBarang() {
+  const getBarang = async() => {
+    setLoading(true)
     try {
       const res = await fetch("/api/barang", { credentials: "include" });
       const payload = await res.json()

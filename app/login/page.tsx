@@ -6,9 +6,10 @@ import { Form, Button, Container, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 import { UserCtx } from '../types/User';
+import { toast } from 'react-toastify';
 
 export default function Login() {
-  const { setUser, setLoading, isChecking } = useAuth();
+  const { setUser, setLoading } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -30,7 +31,7 @@ export default function Login() {
 
       const payload = await res.json()
       if (!res.ok) {
-        alert(payload.error);
+        toast.error(payload.error);
         setLoading(false);
         return
       }
@@ -41,15 +42,15 @@ export default function Login() {
       }
       setUser(user)
       router.replace(`/${payload.role}/inventory`)
-    } catch (error) {
-      alert(error)
+    } catch (error: any) {
+      toast.error(String(error))
       setLoading(false);
     }
   }
 
   useEffect(() => {
     setLoading(false)
-  }, [isChecking])
+  }, [])
 
   return (
     <Container className="mt-3" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: "24px", alignItems: 'center', width: '100%' }}>

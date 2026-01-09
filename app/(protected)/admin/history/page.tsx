@@ -48,6 +48,7 @@ function LogHistory() {
 
   useEffect(() => {
     const getHistory = async () => {
+      setLoading(true)
       try {
         const res = await fetch(`/api/history`, { credentials: 'include' })
         const payload = await res.json()

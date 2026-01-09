@@ -2,7 +2,7 @@ import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { useAuth } from './AuthProvider';
 import Link from 'next/link';
 
-const Layout = ({ children }: {children: React.ReactNode}) => {
+const Header = () => {
   const { user, logout } = useAuth();
 
   return (
@@ -30,11 +30,8 @@ const Layout = ({ children }: {children: React.ReactNode}) => {
           )}
         </Container>
       </Navbar>
-      <Container className="mt-4">
-        {children}
-      </Container>
     </>
   );
 };
 
-export default Layout;
+export default Header;

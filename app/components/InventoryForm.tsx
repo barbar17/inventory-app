@@ -43,7 +43,6 @@ const InventoryForm = ({ editingItem, getBarang, setEditingItem }: {
   }, [user])
   const [item, setItem] = useState<BarangForm>(barangDefaultValue);
   const [editingId, setEditingId] = useState<string | null>(null);
-  console.log(item.status_op)
 
   useEffect(() => {
     if (editingItem) {

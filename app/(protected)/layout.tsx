@@ -14,7 +14,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     const pathParts = pathname.split('/');
     if (pathname !== '/login' && pathParts[1] !== user?.role && user?.role) {
       setIsUserValid(false);
-      console.log("not authorized")
       setUser(null);
       router.replace('/login');
     } else if (pathParts[1] === user?.role) {
