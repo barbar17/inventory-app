@@ -44,7 +44,6 @@ export default function Login() {
       router.replace(`/${payload.role}/inventory`)
     } catch (error: any) {
       toast.error(String(error))
-      setLoading(false);
     }
   }
 

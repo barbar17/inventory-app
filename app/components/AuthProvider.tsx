@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <>
       {loading && <Loader />}
       <AuthContext.Provider value={ctxValue}>
-        <Header/>
+        {user && <Header/>}
         <Container className="mt-4">
           {children}
         </Container>

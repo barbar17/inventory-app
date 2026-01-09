@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/components/AuthProvider';
 import InventoryForm from '@/app/components/InventoryForm';
 import InventoryList from '@/app/components/InventoryList';
@@ -64,6 +64,10 @@ export default function AdminInventory() {
       setTableLoading(false)
     }
   }
+
+  useEffect(() => {
+    setLoading(false)
+  }, [])
 
   return (
     <motion.div
