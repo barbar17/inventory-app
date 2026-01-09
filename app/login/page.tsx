@@ -57,7 +57,7 @@ export default function Login() {
         <h1 className="text-center fw-bold">SPP IT</h1>
         <h1 className="text-center fw-bold">BID TIK POLDA LAMPUNG</h1>
       </div>
-      <div style={{ maxWidth: '35%' }} className='p-4 bg-white border rounded'>
+      <div className='p-4 bg-white border rounded'>
         <h2 className='fw-bold mb-4'>Login</h2>
         <Form onSubmit={handleLogin}>
           <Form.Group className="mb-3">
