@@ -56,10 +56,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const logout = useCallback(() => {
-    setLoading(true);
-    setUser(null);
-    router.replace('/login');
+  const logout = useCallback(async () => {
+    try {
+      const res = await fetch('/api/logout', {
+        method: "POST",
+        credentials: 'include',
+      })
+    } catch (err: any) {
+      toast.error(String(err));
+    } finally {
+      setLoading(true);
+      setUser(null);
+      router.replace('/login');
+    }
   }, [])
 
   useEffect(() => {
@@ -95,10 +104,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             isAuth: true
           }
           setUser(user)
-          setLoading(false)
-        } catch (error) {
-          alert(error)
+        } catch (error: any) {
+          toast.error(String(error))
           logout();
+        } finally {
+          setLoading(false)
         }
       }
 
@@ -113,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <>
       {loading && <Loader />}
       <AuthContext.Provider value={ctxValue}>
-        {user && <Header/>}
+        {user && <Header />}
         <Container className="mt-4">
           {children}
         </Container>

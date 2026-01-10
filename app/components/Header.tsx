@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
-        <Container fluid>
+        <Container>
           <Nav.Link as={Link} href={user ? `/${user?.role}/inventory` : ''}>
             <Navbar.Brand>Inventory Manager</Navbar.Brand>
           </Nav.Link>
@@ -31,7 +31,7 @@ const Header = () => {
               ) : null}
             </Nav>
             {user && (
-              <div className='d-flex justify-content-end align-items-end' style={{ width: "100%" }}>
+              <div className='d-flex justify-content-end align-items-end'>
                 <Button variant="outline-light" onClick={logout}>Logout</Button>
               </div>
             )}

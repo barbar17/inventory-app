@@ -9,7 +9,7 @@ import { UserCtx } from '../types/User';
 import { toast } from 'react-toastify';
 
 export default function Login() {
-  const { setUser, setLoading } = useAuth();
+  const { setUser, setLoading, loading } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
