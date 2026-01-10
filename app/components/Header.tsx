@@ -1,4 +1,4 @@
-import { Container, Navbar, Nav, Button, NavLink, NavDropdown } from 'react-bootstrap';
+import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { useAuth } from './AuthProvider';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

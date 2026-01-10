@@ -27,7 +27,7 @@ export default function AdminInventory() {
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/barang/${deleteBarang?.id}`, {method: 'DELETE'})
+      const res = await fetch(`/api/barang/${deleteBarang?.id}`, { method: 'DELETE' })
       const payload = await res.json();
       if (!res.ok) {
         toast.error(payload.error);
@@ -46,7 +46,7 @@ export default function AdminInventory() {
     }
   }
 
-  const getBarang = async() => {
+  const getBarang = async () => {
     setTableLoading(true);
     try {
       const res = await fetch("/api/barang", { credentials: "include" });
@@ -85,7 +85,7 @@ export default function AdminInventory() {
 
       <h2 className="mt-4">Inventory List</h2>
       <InventoryList
-      tableLoading={tableLoading}
+        tableLoading={tableLoading}
         handleEditItem={setEditingItem}
         onDelete={onDelete}
         readOnly={user?.role === 'user' && true}

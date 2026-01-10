@@ -7,11 +7,12 @@ import { motion } from "motion/react";
 import { toast } from 'react-toastify';
 
 export default function UserInventory() {
-  const { user, setLoading } = useAuth();
+  const { user } = useAuth();
   const [barang, setBarang] = useState<Barang[]>([]);
+  const [tableLoading, setTableLoading] = useState<boolean>(true);
 
   const getBarang = async () => {
-    setLoading(true)
+    setTableLoading(true)
     try {
       const res = await fetch("/api/barang", { credentials: "include" });
       const payload = await res.json()
@@ -25,7 +26,7 @@ export default function UserInventory() {
     } catch (error: any) {
       toast.error(error)
     } finally {
-      setLoading(false)
+      setTableLoading(false)
     }
   }
 
@@ -38,6 +39,7 @@ export default function UserInventory() {
     >
       <h1>Inventaris</h1>
       <InventoryList
+        tableLoading={tableLoading}
         readOnly={user?.role === 'user' && true}
         getBarang={getBarang}
         barang={barang}

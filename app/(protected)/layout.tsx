@@ -12,10 +12,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const pathParts = pathname.split('/');
-    if (pathname !== '/login' && pathParts[1] !== user?.role && user?.role) {
+    if (pathParts[1] !== user?.role && user?.role) {
       setIsUserValid(false);
       setUser(null);
-      router.replace('/login');
+      router.replace('/unauthorized');
     } else if (pathParts[1] === user?.role) {
       setIsUserValid(true);
     }

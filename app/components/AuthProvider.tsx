@@ -16,6 +16,12 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const routeExcluded = (route: string) => {
+  const excludeRoute: string[] = ['/', '/unauthorized', '/login']
+  if(excludeRoute.includes(route)) return true
+  else return false
+}
+
 const Loader = () => {
   return (
     <div
@@ -72,14 +78,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   useEffect(() => {
-    if (!user && pathname !== '/login' && isCheckAuth === false) {
+    if(routeExcluded(pathname)) return
+    if (!user && isCheckAuth === false) {
+      alert("kode 1")
       setUser(null);
-      router.replace('/login');
+      router.replace('/unauthorized');
     }
   }, [pathname]);
 
   useEffect(() => {
-    if (pathname !== '/login') {
+    if(!routeExcluded(pathname)) {
       const refreshContext = async () => {
         try {
           const res = await fetch("/api/user/whoami", {
@@ -87,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
 
           if (res.status === 401) {
-            logout();
+            router.replace('/unauthorized');
             return;
           }
 
