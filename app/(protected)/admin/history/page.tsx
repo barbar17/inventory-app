@@ -51,7 +51,7 @@ function LogHistory() {
         const payload = await res.json()
 
         if (!res.ok) {
-          toast.error(payload.error)
+          toast.error(payload.error.message ?? payload.error)
           return
         }
 
