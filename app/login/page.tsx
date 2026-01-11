@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../components/AuthProvider';
 import { Form, Button, Container, FloatingLabel } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
@@ -9,8 +9,9 @@ import { UserCtx } from '../types/User';
 import { toast } from 'react-toastify';
 
 export default function Login() {
-  const { setUser, setLoading, loading } = useAuth();
+  const { setUser, setLoading } = useAuth();
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,15 +72,22 @@ export default function Login() {
               />
             </FloatingLabel>
           </Form.Group>
-          <Form.Group className="mb-3">
-            <FloatingLabel label='Password'>
+          <Form.Group className="mb-3 password-wrapper">
+            <FloatingLabel label='Password' className='d-flex justify-content-between align-items-center'>
               <Form.Control
                 name='password'
+                className='password-input'
                 placeholder='Password'
-                type="password"
+                type={showPassword ? "text" : "password"}
                 defaultValue=""
                 required
               />
+              <span
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <i className="bi bi-eye fs-5"></i> : <i className="bi bi-eye-slash fs-5"></i>}
+              </span>
             </FloatingLabel>
           </Form.Group>
           <Button type="submit" variant="primary">Login</Button>

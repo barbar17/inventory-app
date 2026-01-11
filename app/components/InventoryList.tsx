@@ -8,7 +8,7 @@ import { PrintTable } from '@/app/components/PrintTable';
 import { ExportToXlsx } from '@/app/components/ExportToXlsx';
 import { toast } from 'react-toastify';
 
-const defaultSort: SortingState = [{ id: 'nama', desc: false },]
+const defaultSort: SortingState = [{ id: 'no', desc: false },]
 
 const InventoryList = ({ handleEditItem, onDelete, readOnly = false, getBarang, barang, tableLoading }: {
   handleEditItem?: (barang: Barang) => void,
