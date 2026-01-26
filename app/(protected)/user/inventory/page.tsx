@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/components/AuthProvider';
 import InventoryList from '@/app/components/InventoryList';
 import { Barang } from '@/app/types/Barang';
@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { toast } from 'react-toastify';
 
 export default function UserInventory() {
-  const { user } = useAuth();
+  const { user, setLoading } = useAuth();
   const [barang, setBarang] = useState<Barang[]>([]);
   const [tableLoading, setTableLoading] = useState<boolean>(true);
 
@@ -29,6 +29,10 @@ export default function UserInventory() {
       setTableLoading(false)
     }
   }
+
+  useEffect(() => {
+    setLoading(false)
+  }, [])
 
   return (
     <motion.div
